@@ -1,0 +1,284 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* General Page Styling */
+body, html {
+  font-family: "Poppins", sans-serif;
+  background: #E7E4DB; /* overall page background */
+  width: 100%;
+  overflow-x: hidden;
+}
+
+/* Full-Width HomePage */
+.homepage {
+  width: 100vw;
+  min-height: 100vh;
+  background: #E7E4DB; /* Ensure the background matches the home page fill */
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+}
+
+/* Hero Section: occupies 80% of the viewport height */
+.hero-section {
+  position: relative;
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 80vh;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  color: white;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.5);
+}
+
+/* Navbar: Logo on left, nav buttons & auth on right */
+.navbar {
+  z-index: 100;
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  display: flex;
+  align-items: center;
+  padding: 20px 50px;
+  background: transparent;
+
+}
+
+.logo {
+  height: 50px;
+  margin-right: auto; /* pushes other items to the right */
+}
+
+/* Nav Buttons: placed on the right side (next to auth) */
+.nav-buttons {
+  display: flex;
+  gap: 15px; /* space between "Start a trip", "Discover", "Message" */
+}
+
+/* Navigation Buttons (Start a trip, Discover, Message) */
+.nav-buttons button {
+  background: #2C3C30;
+  color: #BFB4A0;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  min-width: 140px;  /* Ensures buttons have a consistent width */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+}
+
+.nav-buttons button:hover {
+  background: #28352A;
+  color: #BFB4A0;
+  transform: scale(1.05);
+}
+
+/* Auth Buttons container (Login/Signup) to the right of nav buttons */
+.auth-buttons {
+  font-size: 18px;
+  display: flex;
+  gap: 10px;
+  margin-left: 20px; /* small gap between nav buttons & auth */
+}
+
+/* Single "Login | Signup" pill button */
+.login-signup-button {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  background: #BFB4A0;
+  color: #2C3C30;
+  text-decoration: none;
+  font-weight: bold;
+  padding: 10px 20px;
+  border-radius: 20px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.login-signup-button:hover {
+  background: #A8A08C;
+  color: #2C3C30;
+}
+
+/* Profile picture */
+.profile-pic {
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 20px;
+}
+
+/* Hero text (centered) */
+.hero-text {
+  text-align: center;
+}
+
+/* Destinations Section */
+.destinations {
+  background: #E7E4DB; /* matches overall home page background */
+  padding: 60px 5%;
+  width: 100%;
+  text-align: center; /* centers the heading & the 'View All' button */
+}
+
+.destinations h2 {
+  font-size: 28px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+/* Destination grid styling */
+.destination-grid {
+  display: flex;
+  flex-wrap: nowrap; /* keep 4 cards in one row; horizontal scroll on smaller screens */
+  justify-content: space-between;
+  gap: 20px;
+  width: 100%;
+  overflow-x: auto; /* horizontal scroll if needed */
+  padding-bottom: 10px;
+}
+
+/* Destination Card */
+.destination-card {
+  width: 23%;            /* ~4 across for large screens */
+  background: #DAD4C8;   /* box background from your design */
+  padding: 20px;
+  border-radius: 30px;   /* large rounded corners */
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  text-align: left;
+  transition: transform 0.3s ease-in-out;
+  color: #667255;        /* text color from your design */
+  min-width: 250px;      /* ensures a reasonable min width if screen is small */
+  flex-shrink: 0;        /* prevent shrinking on narrower screens */
+}
+
+.destination-card:hover {
+  transform: scale(1.05);
+}
+
+/* Wide rectangular images using aspect ratio */
+.destination-card img {
+  width: 100%;
+  aspect-ratio: 4 / 3;   /* keeps images wide (4:3) */
+  object-fit: cover;
+  border-radius: 20px;   /* slightly smaller radius for the image */
+}
+
+.destination-card h3 {
+  font-size: 24px;
+  margin: 15px 0 5px;
+  color: #667255;
+}
+
+.destination-card p {
+  font-size: 16px;
+  color: #667255;
+}
+
+/* View All Button */
+/* .view-all {
+  margin-top: 30px;
+  padding: 12px 25px;
+  background: #2c3c30;
+  color: white;
+  border: none;
+  border-radius: 25px;
+  font-size: 18px;
+  cursor: pointer;
+} */
+
+.view-all:hover {
+  background: #1f1f14;
+}
+
+/* Footer */
+footer {
+  background: #B19E7E;  /* background color */
+  color: #424C33;       /* text color */
+  padding: 25px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100vw;
+  margin-top: 50px;
+}
+
+/* Footer Logo */
+.footer-logo {
+  height: 50px;
+  width: auto; /* keeps aspect ratio */
+}
+
+/* Footer Links */
+.footer-links a {
+  text-decoration: none;
+  color: #424C33; /* link color */
+  font-weight: bold;
+  margin-left: 20px;
+  font-size: 16px;
+}
+
+.view-all {
+  display: inline-block;
+  padding: 10px 20px;  /* Adjust padding for a smaller button */
+  font-size: 1rem;      /* Reduce font size slightly */
+  background-color: #374B3C; /* Same dark green background */
+  color: #A8A08C;
+  border-radius: 25px; /* Keep rounded edges */
+  border: none;
+  cursor: pointer;
+  text-align: center;
+  font-weight: bold;
+  width: auto;          /* Prevents it from stretching */
+  min-width: 150px;     /* Adjust min width */
+  max-width: 200px; 
+  position: relative;
+  top: 40px;  /* Moves the button down */
+  transition: all 0.3s ease-in-out;  /* Smooth animation */     
+}
+
+
+/* Remove all underlines from links in .nav-buttons */
+.nav-buttons a,
+.nav-buttons a:visited,
+.nav-buttons a:hover,
+.nav-buttons a:focus,
+.nav-buttons a:active {
+  text-decoration: none !important;
+  color: #BFB4A0 !important;
+}
+
+/* Style the button inside the link */
+.nav-buttons a button {
+  background: #2C3C30;
+  color: #BFB4A0;
+  border: none;
+  padding: 10px 20px;
+  border-radius: 20px;
+  cursor: pointer;
+  font-size: 16px;
+  min-width: 140px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.3s ease-in-out;
+  text-decoration: none; /* Ensure no underline on the button text */
+}
+
+.nav-buttons a button:hover {
+  background: #28352A;
+  transform: scale(1.05);
+}

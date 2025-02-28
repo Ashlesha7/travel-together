@@ -1,0 +1,27 @@
+/* Footer */
+footer {
+    background: #B19E7E;  /* background color */
+    color: #424C33;       /* text color */
+    padding: 25px;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100vw;
+    margin-top: 50px;
+  }
+  
+  /* Footer Logo */
+  .footer-logo {
+    height: 50px;
+    width: auto; /* keeps aspect ratio */
+  }
+  
+  /* Footer Links */
+  .footer-links a {
+    text-decoration: none;
+    color: #424C33; /* link color */
+    font-weight: bold;
+    margin-left: 20px;
+    font-size: 16px;
+  }
+  

@@ -1,0 +1,60 @@
+/********************************************
+ * FULL-WIDTH, FIXED NAVBAR
+ ********************************************/
+ .fullpage-navbar {
+  position: fixed;         /* Stays at the top of the screen */
+  top: 0;
+  left: 0;
+  width: 100%;             /* Spans the entire page width */
+  height: 70px;            /* Navbar height */
+  background-color: #2C3C30; /* Dark green background */
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 1rem;
+  z-index: 9999;           /* Ensure it appears on top of all content */
+}
+
+/* Left side: Logo */
+.navbar-left {
+  display: flex;
+  align-items: center;
+}
+
+.navbar-logo {
+  width: 50px;
+  height: auto;
+}
+
+/* Right side: Buttons + User Pic */
+.navbar-right {
+  display: flex;
+  align-items: center;
+}
+
+/* Nav Buttons */
+.navbar-right button {
+  background-color: #BFB4A0;  /* Light tan */
+  color: #2C3C30;             /* Dark text */
+  border: none;
+  border-radius: 20px;
+  padding: 0.5rem 1rem;
+  margin-left: 0.75rem;
+  cursor: pointer;
+  font-size: 0.9rem;
+  transition: background-color 0.3s;
+  white-space: nowrap;
+}
+
+.navbar-right button:hover {
+  background-color: #A8A08C;  /* Slightly darker on hover */
+}
+
+/* User image on the far right */
+.navbar-user {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  object-fit: cover;
+  margin-left: 0.75rem;
+}

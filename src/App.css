@@ -1,0 +1,314 @@
+
+
+/* -----------------------
+   GLOBAL / BACKGROUND
+--------------------------*/
+body {
+  margin: 0;
+  padding: 0;
+  
+  /* Radial gradient from lighter green at center to darker green at edges */
+  background: radial-gradient(circle at center, #b4c8ae 30%, #748b5c 100%);
+  
+  /* Center the form container */
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  min-height: 100vh;
+  font-family: 'Poppins', sans-serif;
+}
+
+/* -----------------------
+   FORM CONTAINER
+--------------------------*/
+.form-container {
+  background-color: #374B3C;  /* Dark green container */
+  border-radius: 18px;        
+  
+  /* Increased padding and width for a more spacious feel */
+  padding: 3rem 3rem;
+  max-width: 500px;
+  width: 100%;
+
+  /* Soft shadow for depth */
+  box-shadow: 0 15px 35px rgba(0, 0, 0, 0.5);
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  
+  /* Hidden by default (only .active is shown) */
+  display: none;
+}
+
+.form-container.active {
+  display: block;
+}
+
+/* Subtle hover lift effect */
+.form-container:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.6);
+}
+
+/* -----------------------
+   HEADINGS (MODERN LOOK)
+--------------------------*/
+h2 {
+  color: #B19E7E;  
+  font-size: 2rem;
+  text-align: center;
+  font-weight: bold;
+  letter-spacing: 1px;
+  margin-bottom: 1.8rem;
+  position: relative;
+  padding-bottom: 0.5rem;
+}
+
+/* Decorative underline under heading */
+h2::after {
+  content: "";
+  display: block;
+  width: 60px;
+  height: 3px;
+  background: #B19E7E;
+  margin: 0.5rem auto 0;
+  border-radius: 3px;
+}
+
+/* -----------------------
+   LABELS & INPUTS (CLEANER & ELEGANT)
+--------------------------*/
+label {
+  display: block;
+  margin-bottom: 0.7rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: #B19E7E;
+}
+
+input {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: none;
+  border-radius: 10px;
+  background: #fff;
+  font-size: 1.1rem;
+  color: #333;
+  
+  /* Subtle inset shadow for depth */
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.2);
+  transition: box-shadow 0.3s ease, transform 0.2s ease;
+}
+
+input:hover {
+  transform: scale(1.02);
+}
+
+input:focus {
+  outline: none;
+  box-shadow: 0 0 6px 2px rgba(177, 158, 126, 0.7);
+}
+
+::placeholder {
+  color: #bbb;
+  font-size: 0.95rem;
+}
+
+/* -----------------------
+   BUTTONS (MODERN & INTERACTIVE)
+--------------------------*/
+button {
+  background: #B19E7E;
+  color: #374B3C;
+  border: none;
+  border-radius: 10px;
+  padding: 1rem 1.5rem;
+  font-size: 1.1rem;
+  font-weight: bold;
+  cursor: pointer;
+  width: 100%;
+  transition: transform 0.2s ease, background 0.3s ease, box-shadow 0.2s ease;
+}
+
+button:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.4);
+}
+
+button:active {
+  transform: translateY(1px);
+}
+
+.bold-btn {
+  margin-top: 15px;
+}
+
+/* -----------------------
+   FIX FOR "PREVIOUS" & "NEXT" BUTTONS (SPACING & ALIGNMENT)
+--------------------------*/
+
+/* Ensures both buttons align properly */
+.prev-btn,
+.next-btn {
+  width: 48%;  /* Makes buttons take equal width */
+  padding: 12px 0;
+  border-radius: 8px;
+  font-size: 1.1rem;
+  font-weight: bold;
+  text-align: center;
+  transition: background 0.3s ease, transform 0.2s ease;
+  border: none;
+  background: #B19E7E;
+  color: #374B3C;
+  cursor: pointer;
+  display: inline-block;
+  text-align: center;
+}
+
+/* Fixes spacing between buttons */
+.prev-btn {
+  margin-right: 10px; /* Creates proper gap */
+}
+
+/* Hover effect */
+.prev-btn:hover, .next-btn:hover {
+  background: #a18e70;
+  transform: translateY(-2px);
+}
+
+/* Button click effect */
+.prev-btn:active, .next-btn:active {
+  transform: scale(0.98);
+}
+
+/* -----------------------
+   FIX FOR STEP 3 BUTTON SPACING (NO JSX CHANGES)
+--------------------------*/
+.prev-btn {
+  margin-bottom: 12px; /* Adds spacing below the "Previous" button */
+}
+
+/* Ensuring "Submit" button looks properly aligned */
+.submit-btn {
+  width: 100%; /* Makes sure it takes full width */
+}
+
+/* -----------------------
+   FIX FOR SIGN-UP LINK (NO BUTTON BOX)
+--------------------------*/
+.switch {
+  text-align: center;
+  margin-top: 15px;
+  font-size: 1rem;
+  color: #B19E7E;
+}
+
+.switch .link-button {
+  display: inline;
+  padding: 0;
+  font-size: 1rem;
+  font-weight: bold;
+  color: #B19E7E;
+  background: none;
+  border: none;
+  text-decoration: underline;
+  cursor: pointer;
+  font: inherit;
+  transition: color 0.3s ease;
+  box-shadow: none;
+}
+
+.switch .link-button:hover {
+  color: #d1c3a1;
+}
+
+.switch .link-button:active {
+  transform: none;
+  box-shadow: none;
+}
+
+/* -----------------------
+   PROGRESS BAR (Signup)
+--------------------------*/
+.progress-bar {
+  width: 100%;
+  height: 10px;
+  background: rgba(177, 158, 126, 0.3);
+  border-radius: 5px;
+  margin-bottom: 20px;
+  display: none;
+}
+
+.progress-bar.active {
+  display: block;
+}
+
+.progress {
+  height: 100%;
+  width: 0%;
+  background: #B19E7E;
+  border-radius: 5px;
+  transition: width 0.3s ease-in-out;
+}
+
+/* -----------------------
+   MULTI-STEP FORMS
+--------------------------*/
+.form-step {
+  display: none;
+  animation: fadeIn 0.5s ease-in-out;
+}
+
+.form-step.active {
+  display: block;
+}
+
+/* -----------------------
+   KEYFRAMES (Smooth Transitions)
+--------------------------*/
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* -----------------------
+   INPUT FIELDS (No Borders, Best Color Contrast)
+--------------------------*/
+
+input {
+  width: 100%;
+  padding: 1rem;
+  margin-bottom: 1.5rem;
+  border: none;  /* No Border */
+  border-radius: 10px;
+  background: #EDECE6;  /* Soft Beige Background */
+  font-size: 1.1rem;
+  color: #2D2D2D;  /* Dark Grey Text for readability */
+  
+  /* Subtle inset shadow for depth */
+  box-shadow: inset 0 0 3px rgba(0, 0, 0, 0.1);
+  transition: box-shadow 0.2s ease, background 0.3s ease;
+}
+
+/* Placeholder Styling */
+::placeholder {
+  color: #A5A5A5;  /* Soft Grey for distinction */
+  font-size: 1rem;
+}
+
+/* Input Hover Effect */
+input:hover {
+  background: #E6E4DB;  /* Slightly darker beige for hover effect */
+}
+
+/* Input Focus Effect */
+input:focus {
+  outline: none;
+  background: #E0DED4;  /* More contrast when focused */
+  box-shadow: 0 0 6px rgba(177, 158, 126, 0.5);
+}
