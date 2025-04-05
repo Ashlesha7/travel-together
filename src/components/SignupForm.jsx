@@ -401,7 +401,7 @@ function SignupForm({ switchToLogin }) {
             setLoading(true);
             console.log("📤 Sending signup request...", data);
 
-            const response = await axios.post("http://localhost:5000/api/signup", data, {
+            const response = await axios.post("http://localhost:8080/api/signup", data, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 

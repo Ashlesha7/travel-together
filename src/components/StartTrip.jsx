@@ -62,7 +62,7 @@ const StartTrip = () => {
       try {
         const token = localStorage.getItem("token");
         if (token) {
-          const res = await axios.get("http://localhost:5000/api/profile", {
+          const res = await axios.get("http://localhost:8080/api/profile", {
             headers: { Authorization: token },
           });
           setUser(res.data);
@@ -182,7 +182,7 @@ const StartTrip = () => {
         alert("You must be logged in to publish a trip.");
         return;
       }
-      const res = await axios.post("http://localhost:5000/api/trip-plans", tripData, {
+      const res = await axios.post("http://localhost:8080/api/trip-plans", tripData, {
         headers: { Authorization: token },
       });
       console.log("Trip plan created:", res.data);

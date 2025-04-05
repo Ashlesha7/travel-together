@@ -23,7 +23,7 @@ const HomePage = () => {
       try {
         const token = localStorage.getItem("token"); // Get token from local storage
         if (token) {
-          const res = await axios.get("http://localhost:5000/api/profile", {
+          const res = await axios.get("http://localhost:8080/api/profile", {
             headers: { Authorization: token },
           });
           setUser(res.data);
@@ -45,20 +45,23 @@ const HomePage = () => {
           <img src={headerLogo} alt="Header Logo" className="logo" />
 
           <div className="nav-buttons">
-          <Link to="/start-trip">
-            <button>Start a trip</button>
+            <Link to="/start-trip">
+              <button>Start a trip</button>
             </Link>
             <Link to="/discover">
-            <button>Discover</button>
+              <button>Discover</button>
             </Link>
-            <button>Message</button>
+            {/* Updated: Message button is now a link */}
+            <Link to="/messages">
+              <button>Message</button>
+            </Link>
           </div>
 
           {/* If user is logged in, show profile pic; else show single "Login | Signup" button */}
           {user ? (
             <Link to="/profile">
               <img
-                src={`http://localhost:5000/${user.profilePhoto}`}
+                src={`http://localhost:8080/${user.profilePhoto}`}
                 alt="Profile"
                 className="profile-pic"
               />

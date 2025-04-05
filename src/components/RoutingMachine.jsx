@@ -3,7 +3,7 @@ import { useMap } from "react-leaflet";
 import L from "leaflet";
 import "leaflet-routing-machine";
 
-function RoutingMachine({ start, end }) {
+function RoutingMachine({ start, end, instructionsRef }) {
   const map = useMap();
   const routingControlRef = useRef(null);
 
@@ -22,8 +22,25 @@ function RoutingMachine({ start, end }) {
         addWaypoints: false,
         draggableWaypoints: false,
         fitSelectedRoutes: true,
-        show: false, // hide turn-by-turn instructions
+        show: true, // Show turn-by-turn instructions
+        container: instructionsRef.current, // Use the external container
+
+        // Show markers only for first & last waypoints
+        createMarker: (i, waypoint, n) => {
+          if (i === 0 || i === n - 1) {
+            return L.marker(waypoint.latLng);
+          }
+          return null;
+        },
       }).addTo(map);
+
+      // Patch _clearLines to check that _map exists before removing layers
+      control._clearLines = function () {
+        if (this._line && this._map) {
+          this._map.removeLayer(this._line);
+        }
+        this._line = null;
+      };
 
       control.on("routesfound", (e) => {
         console.log("Route found:", e.routes[0].coordinates);
@@ -42,14 +59,18 @@ function RoutingMachine({ start, end }) {
       routingControlRef.current.setWaypoints([]);
     }
 
-    // Cleanup only on unmount
+    // Cleanup on unmount
     return () => {
       if (routingControlRef.current) {
-        map.removeControl(routingControlRef.current);
+        try {
+          map.removeControl(routingControlRef.current);
+        } catch (error) {
+          console.error("Error removing routing control:", error);
+        }
         routingControlRef.current = null;
       }
     };
-  }, [map, start, end]);
+  }, [map, start, end, instructionsRef]);
 
   return null;
 }

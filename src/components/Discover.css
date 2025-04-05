@@ -1,17 +1,12 @@
-/* Discover Page – layout and styling */
+/* Overall Page Layout */
 .discover-page {
   background-color: #E7E4DB;
   min-height: 100vh;
-  width: 100%;
-
-  /* NEW: make this a flex container so children can stretch vertically */
   display: flex;
   flex-direction: column;
 }
 
-/* Container for two-column layout (row on desktop, column on mobile) */
 .discover-content {
-  /* Let this flex container fill remaining vertical space */
   flex: 1;
   display: flex;
   flex-direction: column;
@@ -21,11 +16,11 @@
 @media (min-width: 768px) {
   .discover-content {
     flex-direction: row;
-    align-items: stretch; /* so the map can stretch to full height */
+    align-items: stretch;
   }
 }
 
-/* Left column: Trip list (full width on mobile, 40% on desktop) */
+/* Left Column: Trip List */
 .trip-list {
   width: 100%;
   padding: 20px;
@@ -38,16 +33,18 @@
   }
 }
 
-/* Right column: Map (full width on mobile, 60% on desktop) */
+/* Right Column: Map */
 .discover-map {
   width: 100%;
-
-  /* NEW: let the map container flex to fill vertical space */
   display: flex;
   flex-direction: column;
-  flex: 1; /* key property: fills remaining height in the row */
+  flex: 1;
   min-height: 60vh;
-  width: 100%; 
+}
+
+.discover-map .leaflet-container {
+  flex: 1;
+  width: 100%;
 }
 
 @media (min-width: 768px) {
@@ -56,25 +53,24 @@
   }
 }
 
-/* The actual Leaflet container inside .discover-map should fill the parent */
-.discover-map .leaflet-container {
-  flex: 1; /* expands vertically */
-  width: 100%; 
-}
-
-/* Section title */
+/* Section Title & Search Bar */
 .discover-title {
   font-size: 1.5rem;
   margin-bottom: 1rem;
   color: #2C3C30;
 }
 
-/* Search bar styles */
+/* Search bar now spaced out a bit */
 .search-bar {
   margin-bottom: 1rem;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
 }
+
 .search-bar input {
-  width: 100%;
+  flex: 1;
+  min-width: 160px;
   padding: 0.5rem 1rem;
   font-size: 1rem;
   border: none;
@@ -83,67 +79,107 @@
   color: #2C3C30;
   outline: none;
 }
+
 .search-bar input::placeholder {
   color: #7a7a7a;
 }
 
-/* Trip cards list */
-.trip-cards {
+/* Advanced Filters (Date, Gender, Age) */
+.advanced-filters {
   display: flex;
-  flex-direction: column;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-bottom: 1rem;
+}
+
+.advanced-filters input,
+.advanced-filters select {
+  flex: 1;
+  min-width: 120px;
+  padding: 0.5rem 1rem;
+  font-size: 1rem;
+  border: none;
+  border-radius: 6px;
+  background-color: #DAD4C8;
+  color: #2C3C30;
+  outline: none;
+}
+
+/* Trip Cards Grid */
+.trip-cards {
+  display: grid;
+  grid-template-columns: 1fr; /* Single column by default */
   gap: 16px;
 }
 
-/* Individual trip card */
-.trip-card {
-  background: #fff;
-  border: 1px solid #ccc;
-  border-radius: 8px;
-  padding: 1rem;
-  margin-bottom: 1rem;
-  box-shadow: 0 1px 3px rgba(0,0,0,0.1);
-}
-.trip-card:last-child {
-  margin-bottom: 0;
+@media (min-width: 768px) {
+  .trip-cards {
+    grid-template-columns: 1fr 1fr; /* Two columns on medium+ screens */
+  }
 }
 
-/* Trip details in card */
-.trip-destination {
+/* Individual Trip Card */
+.trip-card {
+  background-color: #fff;
+  border-radius: 8px;
+  overflow: hidden;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+  border: 1px solid #ccc;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.trip-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Image at the Top */
+.trip-card-image-container {
+  width: 100%;
+  height: 180px;
+  overflow: hidden;
+}
+
+.trip-card-image {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+}
+
+/* Card Content (Text Info) */
+.trip-card-content {
+  padding: 1rem;
+}
+
+.trip-card-planner {
   font-size: 1.1rem;
-  font-weight: bold;
   margin: 0;
   color: #2C3C30;
 }
-.trip-dates {
+
+.trip-card-destination {
   margin: 0.3rem 0 0.5rem;
-  font-size: 0.95rem;
+  font-size: 1rem;
+  color: #2C3C30;
+  font-weight: 500;
+}
+
+.trip-card-dates {
+  font-size: 0.9rem;
   color: #2C3C30;
 }
 
-/* Planner info (name and photo) */
-.planner-info {
-  display: flex;
-  align-items: center;
-  gap: 0.5rem;
-}
-.planner-photo {
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  object-fit: cover;
-}
-.planner-name {
-  font-size: 0.95rem;
-  color: #2C3C30;
-}
-
-/* Card action buttons */
+/* Buttons at the Bottom */
 .trip-card-buttons {
   display: flex;
-  justify-content: flex-end;
+  justify-content: space-around;
+  padding: 0.5rem;
   gap: 0.5rem;
-  margin-top: 1rem;
+  border-top: 1px solid #ccc;
+  background-color: #f9f9f9;
 }
+
 .trip-card-buttons button {
   padding: 0.5rem 1rem;
   border: none;
@@ -151,30 +187,37 @@
   font-size: 1rem;
   cursor: pointer;
 }
-/* "Connect" and "Details" button styles */
+
 .connect-button {
   background-color: #2C3C30;
   color: #bfb4a0;
+  border: 1px solid #2C3C30;
 }
+
 .connect-button:hover {
   background-color: #243027;
+  color: #fff;
 }
+
 .details-button {
   background-color: #bfb4a0;
   color: #2C3C30;
-}
-.details-button:hover {
-  background-color: #c8bba5;
+  border: 1px solid #bfb4a0;
 }
 
-/* No-results message */
+.details-button:hover {
+  background-color: #2C3C30;
+  color: #fff;
+}
+
+/* No Results Message */
 .no-results {
   font-style: italic;
   color: #2C3C30;
   margin: 1rem 0;
 }
 
-/* Modal overlay and content for trip details */
+/* Modal Styles */
 .modal-overlay {
   position: fixed;
   top: 0;
@@ -187,6 +230,7 @@
   justify-content: center;
   z-index: 1000;
 }
+
 .modal-content {
   background: #fff;
   padding: 1.5rem;
@@ -195,6 +239,7 @@
   max-width: 500px;
   position: relative;
 }
+
 .close-modal {
   position: absolute;
   top: 0.5rem;
@@ -202,20 +247,177 @@
   background: none;
   border: none;
   font-size: 1.5rem;
-  line-height: 1;
   cursor: pointer;
   color: #2C3C30;
 }
+
 .modal-content h2 {
   margin-top: 0;
   color: #2C3C30;
 }
-.modal-dates, .modal-planner {
+
+.modal-dates,
+.modal-planner {
   margin: 0.5rem 0;
   color: #2C3C30;
 }
+
 .modal-description {
   margin-top: 1rem;
   color: #2C3C30;
 }
 
+/* Push Leaflet’s top-left controls down so they’re fully visible */
+.leaflet-control-container .leaflet-top.leaflet-left {
+  margin-top: 60px;  /* adjust to match your nav’s height */
+  z-index: 1000;     /* ensures controls are above the nav if there's overlap */
+}
+
+/* The container the plugin generates: */
+.leaflet-routing-container.leaflet-control {
+  /* If you previously forced it to display: none, remove that! */
+  /* Instead, style it nicely: */
+  background-color: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  padding: 1rem;
+  /* Add a box shadow for some depth */
+  box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+  max-width: 500px; /* Or whatever width you prefer */
+  margin: 0 auto;   /* Center it if you like */
+  font-family: "Arial", sans-serif; /* Example font */
+  font-size: 0.95rem;               /* Example text size */
+}
+
+/* The main 'alt' block for each route */
+.leaflet-routing-container .leaflet-routing-alt {
+  margin-top: 0.5rem;
+}
+
+/* The instructions table */
+.leaflet-routing-container .leaflet-routing-instructions {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Each row of instructions */
+.leaflet-routing-container .leaflet-routing-instruction {
+  border-bottom: 1px solid #eee;
+  padding: 0.5rem 0;
+}
+
+/* Optional: style the distance column or icon column */
+.leaflet-routing-container .leaflet-routing-instruction td {
+  padding: 0.25rem 0.5rem;
+  vertical-align: middle;
+}
+
+/* Example: style the step icons */
+.leaflet-routing-container .leaflet-routing-icon {
+  width: 24px;
+  text-align: center;
+}
+
+
+
+/* ========== MODAL LAYOUT ========== */
+
+/* The container for our new details layout */
+.details-layout {
+  max-width: 600px;
+  position: relative;
+  background: #fff;
+  border-radius: 8px;
+  padding: 2rem 1.5rem 1.5rem; /* Increased top padding from 1.5rem to 2rem */
+  font-family: Arial, sans-serif;
+}
+
+
+/* Title & date styling */
+.details-destination {
+  margin-top: 0;
+  font-size: 1.5rem;
+  color: #2C3C30;
+}
+
+.details-dates {
+  margin: 0.5rem 0 1rem;
+  color: #666;
+}
+
+/* Two-column container */
+.details-columns {
+  display: flex;
+  gap: 2rem;
+  margin-bottom: 1rem;
+}
+
+/* Left column */
+.details-left {
+  flex: 1;
+}
+
+.details-left ul {
+  margin: 0.5rem 0;
+  padding-left: 1.2rem;
+}
+
+.details-left ul li {
+  list-style: disc;
+  margin-bottom: 0.3rem;
+}
+
+/* Right column */
+.details-right {
+  flex: 1;
+  text-align: center;
+}
+
+.creator-photo {
+  width: 80px;
+  height: 80px;
+  object-fit: cover;
+  border-radius: 50%;
+  margin: 0.5rem 0;
+}
+
+/* Short description */
+.details-description {
+  margin-bottom: 1rem;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* Connect button area */
+.details-connect {
+  text-align: center;
+  margin-top: 1rem;
+}
+
+.details-connect .connect-button {
+  background-color: #2C3C30;
+  color: #fff;
+  border: none;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  outline: none;
+  transition: opacity 0.2s;
+}
+
+.details-connect .connect-button:hover {
+  opacity: 0.9;
+}
+
+/* Close (X) button in top-right corner */
+.close-modal {
+  position: absolute;
+  top: 0.75rem;  /* or 1rem */
+  right: 1rem;   /* or more if needed */
+  background: none;
+  border: none;
+  font-size: 1.5rem;
+  cursor: pointer;
+  color: #2C3C30;
+}

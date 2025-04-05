@@ -62,52 +62,99 @@
 
 // export default App;
 
-
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
 import HomePage from './components/HomePage';
 import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
-import Profile from './components/Profile';  // <--- Import Profile
-import './App.css';
+import Profile from './components/Profile';
 import StartTrip from "./components/StartTrip";
-import 'leaflet/dist/leaflet.css';
 import Discover from "./components/Discover";
-
+import MessagingPage from "./components/MessagingPage";
+import ForgotPassword from "./components/ForgotPassword"; // NEW: Forgot Password component
+import './App.css';
+import 'leaflet/dist/leaflet.css';
+import AdminLogin from './components/admin/AdminLogin';
+import AdminUsers from './components/admin/AdminUsers';
+import AdminDashboard from './components/admin/AdminDashboard';
 
 function App() {
-    const [isLoginActive, setIsLoginActive] = useState(true);
+  const [isLoginActive, setIsLoginActive] = useState(true);
+  const [user, setUser] = useState(null);
 
-    const switchToSignup = () => setIsLoginActive(false);
-    const switchToLogin = () => setIsLoginActive(true);
+  // Simple check to see if an admin token exists
+  const isAdminAuthenticated = !!localStorage.getItem('adminToken');
 
-    return (
-        <Router>
-            <Routes>
-                {/* ✅ Default route - Home Page */}
-                <Route path="/" element={<HomePage />} />
+  // On mount, retrieve user from localStorage (if available)
+  useEffect(() => {
+    const storedUser = localStorage.getItem("user");
+    if (storedUser) {
+      setUser(JSON.parse(storedUser)); // user object with { id, fullName, email, ... }
+    }
+  }, []);
 
-                {/* ✅ Login and Signup Routes */}
-                <Route 
-                    path="/login" 
-                    element={isLoginActive ? <LoginForm switchToSignup={switchToSignup} /> : <Navigate to="/signup" />}
-                />
-                <Route 
-                    path="/signup" 
-                    element={!isLoginActive ? <SignupForm switchToLogin={switchToLogin} /> : <Navigate to="/login" />}
-                />
+  const switchToSignup = () => setIsLoginActive(false);
+  const switchToLogin = () => setIsLoginActive(true);
 
-                {/* ✅ New Profile Route */}
-                <Route path="/profile" element={<Profile />} />
+  return (
+    <Router>
+      <Routes>
+        {/* Default route - Home Page */}
+        <Route path="/" element={<HomePage />} />
 
-                {/* ✅ Redirect any unknown routes to Home Page */}
-                <Route path="*" element={<Navigate to="/" />} />
-                <Route path="/start-trip" element={<StartTrip />} />
-                <Route path="/discover" element={<Discover />} />
+        {/* Login and Signup Routes */}
+        <Route
+          path="/login"
+          element={
+            isLoginActive ? (
+              <LoginForm switchToSignup={switchToSignup} />
+            ) : (
+              <Navigate to="/signup" />
+            )
+          }
+        />
+        <Route
+          path="/signup"
+          element={
+            !isLoginActive ? (
+              <SignupForm switchToLogin={switchToLogin} />
+            ) : (
+              <Navigate to="/login" />
+            )
+          }
+        />
 
-            </Routes>
-        </Router>
-    );
+        {/* Forgot Password Route */}
+        <Route path="/forgot-password" element={<ForgotPassword />} />
+
+        {/* Profile Route */}
+        <Route path="/profile" element={<Profile />} />
+
+        {/* Start Trip Route */}
+        <Route path="/start-trip" element={<StartTrip />} />
+
+        {/* Discover Route */}
+        <Route path="/discover" element={<Discover />} />
+
+        {/* Messaging Page Routes */}
+        {/* When no conversationId is provided */}
+        <Route path="/messages" element={<MessagingPage user={user} />} />
+        {/* When a conversationId is provided */}
+        <Route path="/messages/:conversationId" element={<MessagingPage user={user} />} />
+
+        {/* Admin Routes */}
+        <Route path="/admin/login" element={<AdminLogin />} />
+        <Route 
+          path="/admin/dashboard" 
+          element={isAdminAuthenticated ? <AdminDashboard /> : <Navigate to="/admin/login" />} 
+        />
+        <Route path="/admin/users" element={<AdminUsers />} />
+
+        {/* Redirect any unknown routes to Home Page */}
+        <Route path="*" element={<Navigate to="/" />} />
+      </Routes>
+    </Router>
+  );
 }
 
 export default App;

@@ -7,6 +7,7 @@ body {
   margin: 0;
   padding: 0;
   
+  
   /* Radial gradient from lighter green at center to darker green at edges */
   background: radial-gradient(circle at center, #b4c8ae 30%, #748b5c 100%);
   
@@ -311,4 +312,13 @@ input:focus {
   outline: none;
   background: #E0DED4;  /* More contrast when focused */
   box-shadow: 0 0 6px rgba(177, 158, 126, 0.5);
+}
+
+.forgot-password-link {
+  color: #B19E7E;      
+  text-decoration: none; 
+}
+
+.forgot-password-link:hover {
+  text-decoration: underline; 
 }

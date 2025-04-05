@@ -29,7 +29,9 @@ const UserSchema = new mongoose.Schema({
     coverPhoto: { type: String, default: "" },
     homeBase: { type: String, default: "" },
     birthYear: { type: String, default: "" },
-    gender: { type: String, default: "" },  
+    gender: { type: String, default: "" },
+    resetCode: { type: String, default: "" },
+    resetCodeExpiry: { type: Date }
 });
 
 module.exports = mongoose.model('User', UserSchema);

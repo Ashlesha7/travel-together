@@ -2,10 +2,9 @@ import React from "react";
 import "./Navigation.css";
 import logo from "../assets/logo.png"; // Adjust path if needed
 import { Link } from "react-router-dom";
+import NotificationBell from "./NotificationBell";
 
-
-// Accepts a "user" prop for dynamic user data (including profilePhoto)
-const Navigation = ({ user }) => {
+const Navigation = ({ user, newMessageCount = 0 }) => {
   return (
     <header className="fullpage-navbar">
       {/* Left Section: Logo */}
@@ -16,16 +15,28 @@ const Navigation = ({ user }) => {
       {/* Right Section: Nav Buttons + User Pic */}
       <div className="navbar-right">
         <Link to="/start-trip">
-        <button>Start a trip</button>
+          <button>Start a trip</button>
         </Link>
         <Link to="/discover">
-        <button>Discover</button>
+          <button>Discover</button>
         </Link>
-        <button>Message</button>
+
+        {/* Message button with a badge if newMessageCount > 0 */}
+        <Link to="/messages" style={{ position: "relative" }}>
+          <button className="nav-button">
+            Message
+            {newMessageCount > 0 && (
+              <span className="message-badge">{newMessageCount}</span>
+            )}
+          </button>
+        </Link>
+
+        <NotificationBell user={user} />
+
         <img
           src={
             user && user.profilePhoto
-              ? `http://localhost:5000/${user.profilePhoto}`
+              ? `http://localhost:8080/${user.profilePhoto}`
               : "/path/to/defaultUser.png"
           }
           alt="User"
