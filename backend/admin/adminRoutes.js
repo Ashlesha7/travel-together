@@ -73,7 +73,7 @@ router.get("/admin/dashboard", verifyAdmin, async (req, res) => {
     // Query your User and TripPlan collections for metrics.
     const totalUsers = await User.countDocuments();
     const totalTrips = await TripPlan.countDocuments();
-    // Fetch the three most recent signups (you can adjust the limit and fields)
+    // Fetch the three most recent signups (adjust the limit and fields as needed)
     const recentUsers = await User.find()
       .sort({ createdAt: -1 })
       .limit(3)
@@ -114,6 +114,115 @@ router.delete("/admin/users/:id", verifyAdmin, async (req, res) => {
   } catch (error) {
     console.error("Error deleting user:", error);
     return res.status(500).json({ msg: "Server error", error: error.message });
+  }
+});
+
+// --------------------
+// New Admin Trip Plans Endpoints
+// --------------------
+
+// Get all trip plans (for admin trip plans management)
+router.get("/admin/trip-plans", verifyAdmin, async (req, res) => {
+  try {
+    // Fetch all trip plans, optionally populate user fields for display
+    const trips = await TripPlan.find()
+      .populate("user", "fullName profilePhoto")
+      .sort({ createdAt: -1 });
+    return res.status(200).json(trips);
+  } catch (error) {
+    console.error("Error fetching trip plans:", error);
+    return res.status(500).json({ msg: "Server error", error: error.message });
+  }
+});
+
+// Delete a trip plan by ID
+router.delete("/admin/trip-plans/:id", verifyAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    await TripPlan.findByIdAndDelete(id);
+    return res.status(200).json({ msg: "Trip plan deleted successfully" });
+  } catch (error) {
+    console.error("Error deleting trip plan:", error);
+    return res.status(500).json({ msg: "Server error", error: error.message });
+  }
+});
+
+// Mark a trip plan as completed
+router.patch("/admin/trip-plans/:id/complete", verifyAdmin, async (req, res) => {
+  try {
+    const trip = await TripPlan.findById(req.params.id);
+    if (!trip) return res.status(404).json({ msg: "Trip not found" });
+    trip.status = "completed";
+    await trip.save();
+    return res.status(200).json({ msg: "Trip marked as completed", trip });
+  } catch (error) {
+    console.error("Error marking trip as completed:", error);
+    return res.status(500).json({ msg: "Server error", error: error.message });
+  }
+});
+
+// --------------------
+// Reports Endpoint with Status Distribution
+// --------------------
+router.get("/admin/reports", verifyAdmin, async (req, res) => {
+  try {
+    // Aggregate user registrations per month
+    const userRegistrations = await User.aggregate([
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id": 1 } }
+    ]);
+    
+    // Aggregate trip plans submissions per month
+    const tripPlans = await TripPlan.aggregate([
+      {
+        $group: {
+          _id: { $month: "$createdAt" },
+          count: { $sum: 1 }
+        }
+      },
+      { $sort: { "_id": 1 } }
+    ]);
+    
+    // Aggregate trip plan status distribution
+    const statusAggregation = await TripPlan.aggregate([
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+    const statusDistribution = statusAggregation.map(item => ({
+      status: item._id,
+      count: item.count
+    }));
+    
+    // Convert numeric month to month abbreviations
+    const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+    
+    const formattedUserRegs = userRegistrations.map(item => ({
+      month: monthNames[item._id - 1],
+      count: item.count
+    }));
+    
+    const formattedTripPlans = tripPlans.map(item => ({
+      month: monthNames[item._id - 1],
+      count: item.count
+    }));
+    
+    res.status(200).json({
+      userRegistrations: formattedUserRegs,
+      tripPlans: formattedTripPlans,
+      statusDistribution: statusDistribution
+    });
+  } catch (error) {
+    console.error("Error fetching reports:", error);
+    res.status(500).json({ msg: "Server error", error: error.message });
   }
 });
 

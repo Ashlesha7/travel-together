@@ -77,6 +77,8 @@ import 'leaflet/dist/leaflet.css';
 import AdminLogin from './components/admin/AdminLogin';
 import AdminUsers from './components/admin/AdminUsers';
 import AdminDashboard from './components/admin/AdminDashboard';
+import AdminTripPlans  from './components/admin/AdminTripPlans';
+import AdminReports from './components/admin/AdminReports';
 
 function App() {
   const [isLoginActive, setIsLoginActive] = useState(true);
@@ -149,6 +151,8 @@ function App() {
           element={isAdminAuthenticated ? <AdminDashboard /> : <Navigate to="/admin/login" />} 
         />
         <Route path="/admin/users" element={<AdminUsers />} />
+        <Route path="/admin/trip-plans" element={<AdminTripPlans />} />
+        <Route path="/admin/reports" element={<AdminReports />} />
 
         {/* Redirect any unknown routes to Home Page */}
         <Route path="*" element={<Navigate to="/" />} />
