@@ -166,6 +166,8 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
+import { GoogleLogin } from '@react-oauth/google'; // NEW: Import the GoogleLogin component
+
 
 function LoginForm({ switchToSignup }) {
   const [email, setEmail] = useState('');
@@ -204,6 +206,32 @@ function LoginForm({ switchToSignup }) {
     }
   };
 
+  // Remove the dummy token code and use the GoogleLogin component to get a real token
+  const handleGoogleSuccess = async (credentialResponse) => {
+    // The real token is obtained here from Google via the OAuth library
+    const googleIdToken = credentialResponse.credential;
+    try {
+      console.log("Google token received:", googleIdToken);
+      const response = await axios.post('http://localhost:8080/api/google-signin', { token: googleIdToken });
+      console.log("✅ Google sign-in successful:", response.data);
+
+      localStorage.setItem('token', response.data.token);
+      localStorage.setItem('user', JSON.stringify(response.data.user));
+
+      alert(response.data.message);
+      window.location.href = "/dashboard";
+    } catch (error) {
+      console.error("❌ Google sign-in failed:", error.response?.data);
+      alert(error.response?.data?.message || 'Google sign in failed.');
+    }
+  };
+
+  // NEW: Handler for errors from the GoogleLogin component
+  const handleGoogleError = () => {
+    console.error("Google sign in was unsuccessful.");
+    alert("Google sign in was unsuccessful. Please try again.");
+  };
+
   return (
     <div className="form-container active">
       <h2>Login</h2>
@@ -240,12 +268,19 @@ function LoginForm({ switchToSignup }) {
         </p>
 
         {/* NEW: Forgot Password Link */}
-        <p className="forgot-password" style={{ textAlign: 'center', marginTop: '1rem' }}>
+        <p className="forgot-password">
           <Link to="/forgot-password" className="forgot-password-link">
-          Forgot Password?
+            Forgot Password?
           </Link>
-          </p>
+        </p>
 
+        {/* NEW: Google Sign-In Button using the GoogleLogin component */}
+        <div className="google-auth-btn-container">
+          <GoogleLogin
+            onSuccess={handleGoogleSuccess}
+            onError={handleGoogleError}
+          />
+        </div>
       </form>
     </div>
   );

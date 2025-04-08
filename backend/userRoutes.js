@@ -4,6 +4,7 @@ const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
 const multer = require("multer");
 const nodemailer = require("nodemailer"); // NEW: Import nodemailer
+const { OAuth2Client } = require("google-auth-library"); // NEW: Import Google Auth client
 const User = require("./userModel");
 const path = require("path");
 const fs = require("fs");
@@ -44,16 +45,72 @@ const upload = multer({
 
 // Setup Nodemailer transporter using environment variables
 const transporter = nodemailer.createTransport({
-  host: process.env.SMTP_HOST,      // e.g., "smtp.gmail.com" for Gmail
-  port: process.env.SMTP_PORT,      // e.g., 587 for Gmail (or 465 for SSL)
+  host: process.env.SMTP_HOST, // e.g., "smtp.gmail.com" for Gmail
+  port: process.env.SMTP_PORT, // e.g., 587 for Gmail (or 465 for SSL)
   secure: process.env.SMTP_SECURE === "true", // true for port 465, false for 587
   auth: {
-    user: process.env.SMTP_USER,    // your email address
-    pass: process.env.SMTP_PASS,    // your email password or app password
+    user: process.env.SMTP_USER, // your email address
+    pass: process.env.SMTP_PASS, // your email password or app password
   },
 });
 
+// ----------------------------
+// NEW: Google Sign-In Endpoint
+// ----------------------------
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+router.post("/google-signin", async (req, res) => {
+  const { token } = req.body;
+  if (!token) {
+    return res.status(400).json({ msg: "Google token is required" });
+  }
+  try {
+    const ticket = await googleClient.verifyIdToken({
+      idToken: token,
+      audience: process.env.GOOGLE_CLIENT_ID,
+    });
+    const payload = ticket.getPayload();
+    const { email, name, picture } = payload;
+
+    // Check if user already exists; if not, create a new user record
+    let user = await User.findOne({ email });
+    if (!user) {
+      user = new User({
+        fullName: name,
+        email: email,
+        phoneNumber: "",            // To be updated by the user later
+        citizenshipNumber: "",      // To be updated by the user later
+        password: "",               // No password required for Google sign in
+        citizenshipPhoto: "",       // To be updated by the user later
+        profilePhoto: picture,      // Use Google profile picture as default
+      });
+      await user.save();
+    }
+
+    // Generate JWT token
+    const jwtToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "1h" });
+
+    // Determine if profile is complete (here we check for three critical fields)
+    const profileComplete = user.phoneNumber && user.citizenshipNumber && user.citizenshipPhoto ? true : false;
+
+    res.status(200).json({
+      message: "Google sign-in successful",
+      token: jwtToken,
+      user: {
+        id: user._id.toString(),
+        fullName: user.fullName,
+        email: user.email,
+        profileComplete,
+      },
+    });
+  } catch (error) {
+    console.error("Google sign-in error:", error);
+    res.status(500).json({ message: "Server error during Google sign-in", error: error.message });
+  }
+});
+
+// ----------------------------
 // Signup Route (Handles FormData & Files)
+// ----------------------------
 router.post(
   "/signup",
   upload.fields([{ name: "citizenshipPhoto" }, { name: "profilePhoto" }]),
@@ -107,7 +164,9 @@ router.post(
   }
 );
 
+// ----------------------------
 // Login Route
+// ----------------------------
 router.post("/login", async (req, res) => {
   const { email, password } = req.body;
 
@@ -143,7 +202,9 @@ router.post("/login", async (req, res) => {
   }
 });
 
+// ----------------------------
 // Forgot Password Route
+// ----------------------------
 router.post("/forgot-password", async (req, res) => {
   const { email } = req.body;
   if (!email) return res.status(400).json({ msg: "Email is required" });
@@ -177,7 +238,9 @@ router.post("/forgot-password", async (req, res) => {
   }
 });
 
+// ----------------------------
 // Reset Password Route
+// ----------------------------
 router.post("/reset-password", async (req, res) => {
   const { email, resetCode, newPassword } = req.body;
   if (!email || !resetCode || !newPassword) {
@@ -208,7 +271,9 @@ router.post("/reset-password", async (req, res) => {
   }
 });
 
+// ----------------------------
 // Protected Route (To Check Token)
+// ----------------------------
 router.get("/profile", async (req, res) => {
   try {
     const token = req.header("Authorization");
@@ -229,10 +294,14 @@ router.get("/profile", async (req, res) => {
   }
 });
 
+// ----------------------------
 // Serve Uploaded Files (Access Images)
+// ----------------------------
 router.use("/uploads", express.static(uploadDir));
 
-// Get User Profile
+// ----------------------------
+// Get User Profile (Detailed)
+// ----------------------------
 router.get("/user-profile", async (req, res) => {
   try {
     const token = req.header("Authorization");
@@ -253,7 +322,9 @@ router.get("/user-profile", async (req, res) => {
   }
 });
 
+// ----------------------------
 // Update User Profile
+// ----------------------------
 router.put("/user-profile", upload.single("coverPhoto"), async (req, res) => {
   try {
     const token = req.header("Authorization");
@@ -281,7 +352,9 @@ router.put("/user-profile", upload.single("coverPhoto"), async (req, res) => {
   }
 });
 
+// ----------------------------
 // Additional route to update only cover photo
+// ----------------------------
 router.patch("/user-profile/cover", upload.single("coverPhoto"), async (req, res) => {
   try {
     const token = req.header("Authorization");
@@ -311,7 +384,9 @@ router.patch("/user-profile/cover", upload.single("coverPhoto"), async (req, res
   }
 });
 
+// ----------------------------
 // Lookup user by username
+// ----------------------------
 router.get("/users", async (req, res) => {
   try {
     const { username } = req.query;

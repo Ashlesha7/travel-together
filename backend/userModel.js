@@ -19,11 +19,11 @@ const mongoose = require('mongoose');
 const UserSchema = new mongoose.Schema({
     fullName: { type: String, required: true },
     email: { type: String, required: true, unique: true },
-    phoneNumber: { type: String, required: true },
-    citizenshipNumber: { type: String, required: true },
-    citizenshipPhoto: { type: String, required: true },
-    profilePhoto: { type: String, required: true },
-    password: { type: String, required: true },
+    phoneNumber: { type: String, required: false, default: "" },
+    citizenshipNumber: { type: String, required: false, default: "" },
+    citizenshipPhoto: { type: String, required: false, default: "" },
+    profilePhoto: { type: String, required: true }, // You might want profilePhoto always provided (or default one from Google)
+    password: { type: String, required: false, default: "" },
     createdAt: { type: Date, default: Date.now },
     bio: { type: String, default: "" },                     
     coverPhoto: { type: String, default: "" },

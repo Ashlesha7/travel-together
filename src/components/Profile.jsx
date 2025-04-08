@@ -888,33 +888,39 @@ export default function Profile() {
 
       {/* Settings Modal (only shows if showSettings = true) */}
       {showSettings && (
-  <div className="settings-modal">
-    <div className="settings-modal-content">
-      <h2>Settings</h2>
+        <div className="settings-modal">
+          <div className="settings-modal-content">
+            <h2>Settings</h2>
 
-      {/* Settings List Container */}
-      <div className="settings-list">
-        {/* Theme Option */}
-        <div className="settings-item">
-          <span>Theme</span>
-          <button onClick={handleThemeToggle}>Toggle Dark/Light</button>
+            {/* Settings List Container */}
+            <div className="settings-list">
+              {/* Theme Option */}
+              <div className="settings-item">
+                <span>Theme</span>
+                <button onClick={handleThemeToggle}>Toggle Dark/Light</button>
+              </div>
+
+              {/* Logout Option */}
+              <div className="settings-item">
+                <span>Logout</span>
+                <button onClick={handleLogout}>Logout</button>
+              </div>
+            </div>
+
+            {/* Close Button */}
+            <button className="close-modal-btn" onClick={() => setShowSettings(false)}>
+              Close
+            </button>
+          </div>
         </div>
+      )}
 
-        {/* Logout Option */}
-        <div className="settings-item">
-          <span>Logout</span>
-          <button onClick={handleLogout}>Logout</button>
+      {/* NEW: Incomplete Profile Banner */}
+      {user && (!user.phoneNumber || !user.citizenshipNumber || !user.citizenshipPhoto) && (
+        <div className="incomplete-profile-banner">
+          Your profile is incomplete. Please update your phone number, citizenship number, and upload your citizenship photo to gain full access to all features.
         </div>
-      </div>
-
-      {/* Close Button */}
-      <button className="close-modal-btn" onClick={() => setShowSettings(false)}>
-        Close
-      </button>
-    </div>
-  </div>
-)}
-
+      )}
 
       {/* Main Profile Content */}
       <div className="profile-main">
@@ -940,9 +946,7 @@ export default function Profile() {
             <div className="section-header">
               <h2>About Me</h2>
               <button className="edit-btn" onClick={handleAboutEdit}>
-                {user?.homeBase || user?.birthYear || user?.gender
-                  ? "Edit"
-                  : "Add"}
+                {user?.homeBase || user?.birthYear || user?.gender ? "Edit" : "Add"}
               </button>
             </div>
             <div className="section-content">

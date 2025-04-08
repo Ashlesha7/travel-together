@@ -319,15 +319,15 @@
 
 // export default SignupForm;
 
+
 import React, { useState } from "react";
 import axios from "axios";
-
 
 function SignupForm({ switchToLogin }) {
     const [currentStep, setCurrentStep] = useState(1);
     const [loading, setLoading] = useState(false);
 
-    // State to store form data
+    // State to store form data for manual signup
     const [formData, setFormData] = useState({
         fullName: "",
         email: "",
@@ -366,7 +366,8 @@ function SignupForm({ switchToLogin }) {
     const handleSubmit = async (e) => {
         e.preventDefault();
 
-        // Validate all fields
+        // VALIDATION for manual signup:
+        // These fields must be provided for a manual signup.
         if (!formData.fullName || !formData.email || !formData.phoneNumber || !formData.citizenshipNumber) {
             alert("All fields are required!");
             return;
@@ -553,4 +554,3 @@ function SignupForm({ switchToLogin }) {
 }
 
 export default SignupForm;
-
