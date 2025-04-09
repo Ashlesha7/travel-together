@@ -696,9 +696,13 @@ export default function Profile() {
         gender: tempGender,
       };
 
-      await axios.put("http://localhost:8080/api/user-profile", updatedFields, {
+      const res=await axios.put("http://localhost:8080/api/user-profile", updatedFields, {
         headers: { Authorization: token },
       });
+
+      // Update localStorage with the new, complete user object returned from the API
+      localStorage.setItem("user", JSON.stringify(res.data.user));
+
       await fetchUser();
       setShowAboutEdit(false);
     } catch (error) {

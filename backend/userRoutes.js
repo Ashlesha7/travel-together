@@ -99,6 +99,9 @@ router.post("/google-signin", async (req, res) => {
         id: user._id.toString(),
         fullName: user.fullName,
         email: user.email,
+        phoneNumber: user.phoneNumber,            // add these lines
+        citizenshipNumber: user.citizenshipNumber,
+        citizenshipPhoto: user.citizenshipPhoto,
         profileComplete,
       },
     });
@@ -194,6 +197,9 @@ router.post("/login", async (req, res) => {
         id: user._id.toString(),
         fullName: user.fullName,
         email: user.email,
+        phoneNumber: user.phoneNumber,            // add these lines
+        citizenshipNumber: user.citizenshipNumber,
+        citizenshipPhoto: user.citizenshipPhoto,
       },
     });
   } catch (error) {
