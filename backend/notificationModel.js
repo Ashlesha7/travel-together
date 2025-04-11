@@ -7,7 +7,11 @@ const NotificationSchema = new mongoose.Schema({
   receiverId: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true },
   type: { type: String, required: true },
   message: { type: String, required: true },
-  status: { type: String, enum: ["pending", "accepted", "rejected"], default: "pending" },
+  status: { 
+    type: String, 
+    enum: ["pending", "accepted", "rejected", "read"], // Added "read"
+    default: "pending" 
+  },
   createdAt: { type: Date, default: Date.now },
 });
 

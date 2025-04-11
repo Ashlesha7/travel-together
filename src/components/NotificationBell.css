@@ -1,87 +1,143 @@
-/* NotificationBell.css */
-
 /* Container for the notification bell */
 .notification-bell {
-    position: relative;
-    display: inline-block;
-  }
-  
-  /* The bell icon button */
-  .notification-icon {
-    background: transparent;
-    border: none;
-    font-size: 24px; /* Adjust size as needed */
-    cursor: pointer;
-    position: relative;
-    color: #2C3C30;
-    outline: none;
-    margin: 0 10px; /* Spacing around the icon */
-  }
-  
-  .notification-icon:hover {
-    color: #000; /* Slight hover color change */
-  }
-  
-  /* The badge for unread notifications */
-  .notification-icon .badge {
-    position: absolute;
-    top: -4px;
-    right: -4px;
-    background: #e74c3c; /* A red badge color */
-    color: #fff;
-    border-radius: 50%;
-    padding: 2px 6px;
-    font-size: 12px;
-  }
-  
-  /* Dropdown container for notifications */
-  .notification-dropdown {
-    position: absolute;
-    top: 45px;
-    right: 0;
-    width: 280px; /* Increased width */
-    background: #fff;
-    border: 1px solid #ccc;
-    border-radius: 6px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.15);
-    z-index: 1000;
-    padding: 1rem;
-  }
-  
-  /* Each individual notification item */
-  .notification-item {
-    margin-bottom: 1rem;
-    font-size: 14px;
-    color: #333;
-    line-height: 1.4;
-    font-family: "Arial", sans-serif;
-  }
-  
-  /* Remove bottom margin from the last item */
-  .notification-item:last-child {
-    margin-bottom: 0;
-  }
-  
-  /* Action buttons container */
-  .notification-actions {
-    margin-top: 0.5rem;
-    text-align: right;
-  }
-  
-  /* Style for Accept/Reject buttons */
-  .notification-actions button {
-    background-color: #2C3C30;
-    color: #fff;
-    border: none;
-    border-radius: 4px;
-    padding: 0.4rem 0.8rem;
-    font-size: 0.9rem;
-    cursor: pointer;
-    margin-left: 0.5rem;
-  }
-  
-  /* Button hover effect */
-  .notification-actions button:hover {
-    opacity: 0.8;
-  }
-  
+  position: relative;
+  display: inline-block;
+}
+
+/* The bell icon button */
+.notification-icon {
+  background: transparent;
+  border: none;
+  font-size: 24px; /* Adjust size as needed */
+  cursor: pointer;
+  position: relative;
+  color: #2C3C30;
+  outline: none;
+  margin: 0 10px; /* Spacing around the icon */
+  transition: color 0.2s ease;
+}
+
+.notification-icon:hover {
+  color: #000; /* Slight hover color change */
+}
+
+/* The badge for unread notifications */
+.notification-icon .badge {
+  position: absolute;
+  top: -4px;
+  right: -4px;
+  background: #e74c3c; /* A red badge color */
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+/* Dropdown container for notifications */
+.notification-dropdown {
+  position: absolute;
+  top: 45px;
+  right: 0;
+  width: 300px; /* Slightly wider for a more "card-like" menu */
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  padding: 0.5rem 0; /* top/bottom padding for the list */
+  font-family: "Arial", sans-serif;
+}
+
+/* New: Header of the notification dropdown */
+.notification-dropdown-header {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.notification-dropdown-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #2C3C30;
+}
+
+/* Each individual notification item with a "card" style */
+.notification-item {
+  background-color: #F8F8F8; /* light background for each notification */
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 0.5rem 1rem; /* horizontal & vertical spacing inside dropdown */
+  padding: 0.75rem;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.notification-item:hover {
+  background-color: #f1f1f1; /* subtle hover effect */
+}
+
+/* If needed, style for accepted or rejected */
+.notification-item.accepted {
+  border-left: 3px solid #2C3C30; /* a small highlight for accepted items */
+}
+.notification-item.rejected {
+  border-left: 3px solid #e74c3c; /* highlight rejected items in red */
+}
+
+/* The text (message) inside the notification */
+.notification-item p {
+  margin: 0;
+  font-size: 14px;
+  color: #333;
+  line-height: 1.4;
+}
+
+/* Container for Accept/Reject buttons: horizontal alignment */
+.notification-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: flex-end; /* push buttons to the right */
+  gap: 0.5rem;               /* spacing between buttons */
+}
+
+/* Style for Accept/Reject buttons */
+.notification-actions button {
+  background-color: #2C3C30;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+/* Button hover effect */
+.notification-actions button:hover {
+  opacity: 0.85;
+}
+
+/* New: Footer of the notification dropdown */
+.notification-dropdown-footer {
+  padding: 0.5rem 1rem;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+/* Style for the "View All Notifications" button */
+.view-all-btn {
+  background-color: #2C3C30;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.view-all-btn:hover {
+  opacity: 0.85;
+}

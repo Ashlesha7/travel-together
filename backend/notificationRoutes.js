@@ -311,4 +311,22 @@ router.post("/notifications/mark-read", auth, async (req, res) => {
   }
 });
 
+// 7) Fetch notification history for the logged-in user (last 2 months)
+// This endpoint returns all notifications (read or unread) created within the last 2 months.
+router.get("/notifications/history", auth, async (req, res) => {
+  try {
+    const twoMonthsAgo = new Date();
+    twoMonthsAgo.setMonth(twoMonthsAgo.getMonth() - 2);
+    const notifications = await Notification.find({
+      receiverId: req.user.id,
+      createdAt: { $gte: twoMonthsAgo }
+    }).sort({ createdAt: -1 });
+    res.status(200).json(notifications);
+  } catch (err) {
+    console.error("Error fetching notification history:", err);
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
+});
+
+
 module.exports = router;

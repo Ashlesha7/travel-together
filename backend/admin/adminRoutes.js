@@ -7,6 +7,7 @@ const Admin = require("../admin/adminModel");  // Adjust path if needed
 // New imports for gathering dashboard metrics:
 const User = require("../userModel");        // Path to your User model
 const TripPlan = require("../tripPlanModel");  // Path to your TripPlan model
+const Notification = require("../notificationModel");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
@@ -160,6 +161,27 @@ router.patch("/admin/trip-plans/:id/complete", verifyAdmin, async (req, res) => 
     return res.status(500).json({ msg: "Server error", error: error.message });
   }
 });
+
+// --------------------
+// New Endpoint for Admin Notifications
+// --------------------
+// This endpoint allows an admin to view notifications across all users.
+router.get("/admin/notifications", verifyAdmin, async (req, res) => {
+  if (!req.admin || req.admin.role !== "admin") {
+    return res.status(403).json({ msg: "Admin access required" });
+  }
+  try {
+    const notifications = await Notification.find()
+      .populate("senderId", "fullName")
+      .populate("receiverId", "fullName")
+      .sort({ createdAt: -1 });
+    res.status(200).json(notifications);
+  } catch (err) {
+    console.error("Error fetching all notifications for admin:", err);
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
+});
+
 
 // --------------------
 // Reports Endpoint with Status Distribution
