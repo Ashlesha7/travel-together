@@ -136,6 +136,15 @@ function AdminReports() {
             Trip Plans
           </div>
 
+          <div
+          style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(6) }}
+          onMouseEnter={() => handleMouseEnter(6)}
+          onMouseLeave={handleMouseLeave}
+          onClick={() => navigate('/admin/notifications')}
+          >
+            Notifications
+            </div>
+
           {/* Highlight “Reports” */}
           <div
             style={{
@@ -212,6 +221,15 @@ function AdminReports() {
         >
           Trip Plans
         </div>
+
+        <div
+          style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(6) }}
+          onMouseEnter={() => handleMouseEnter(6)}
+          onMouseLeave={handleMouseLeave}
+          onClick={() => navigate('/admin/notifications')}
+          >
+            Notifications
+            </div>
 
         {/* Highlight “Reports” */}
         <div
@@ -300,6 +318,23 @@ function AdminReports() {
               <Tooltip />
               <Legend />
               <Bar dataKey="count" fill="#9b59b6" name="Status Count" />
+            </BarChart>
+          </ResponsiveContainer>
+        </div>
+        {/* New Section: Notifications Distribution */}
+        <div style={{ marginBottom: '40px' }}>
+          <h3 style={{ textAlign: 'center', color: '#2c3e50' }}>Notifications Distribution</h3>
+          <ResponsiveContainer width="100%" height={300}>
+            <BarChart
+              data={reportData.notificationsDistribution}  // expected format: [{ status: "pending", count: X }, ...]
+              margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
+            >
+              <CartesianGrid strokeDasharray="3 3" />
+              <XAxis dataKey="status" />
+              <YAxis />
+              <Tooltip />
+              <Legend />
+              <Bar dataKey="count" fill="#f1c40f" name="Notifications" />
             </BarChart>
           </ResponsiveContainer>
         </div>

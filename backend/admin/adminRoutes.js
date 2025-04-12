@@ -171,16 +171,41 @@ router.get("/admin/notifications", verifyAdmin, async (req, res) => {
     return res.status(403).json({ msg: "Admin access required" });
   }
   try {
-    const notifications = await Notification.find()
+    // Extract optional query params
+    const { status, page = 1, limit = 20 } = req.query;
+    
+    // Build a filter object
+    const filter = {};
+    if (status) {
+      // Only filter by status if it's provided
+      filter.status = status;
+    }
+
+    // For pagination
+    const skip = (page - 1) * limit;
+
+    // Query the DB with optional filter + pagination
+    const notifications = await Notification.find(filter)
       .populate("senderId", "fullName")
       .populate("receiverId", "fullName")
-      .sort({ createdAt: -1 });
-    res.status(200).json(notifications);
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit, 10));
+
+    // Also get total count of matching notifications
+    const totalCount = await Notification.countDocuments(filter);
+
+    return res.status(200).json({
+      total: totalCount,
+      notifications
+    });
   } catch (err) {
-    console.error("Error fetching all notifications for admin:", err);
-    res.status(500).json({ msg: "Server error", error: err.message });
+    console.error("Error fetching notifications:", err);
+    return res.status(500).json({ msg: "Server error", error: err.message });
   }
 });
+
+
 
 
 // --------------------
@@ -223,6 +248,23 @@ router.get("/admin/reports", verifyAdmin, async (req, res) => {
       status: item._id,
       count: item.count
     }));
+
+    // Aggregate notification status distribution
+    const notificationsDistribution = await Notification.aggregate([
+      {
+        $group: {
+          _id: "$status",
+          count: { $sum: 1 }
+        }
+      }
+    ]);
+    
+    // Convert _id to 'status' field
+    const formattedNotificationsDist = notificationsDistribution.map(item => ({
+      status: item._id,
+      count: item.count
+    }));
+    
     
     // Convert numeric month to month abbreviations
     const monthNames = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
@@ -240,7 +282,8 @@ router.get("/admin/reports", verifyAdmin, async (req, res) => {
     res.status(200).json({
       userRegistrations: formattedUserRegs,
       tripPlans: formattedTripPlans,
-      statusDistribution: statusDistribution
+      statusDistribution: statusDistribution,
+      notificationsDistribution: formattedNotificationsDist
     });
   } catch (error) {
     console.error("Error fetching reports:", error);

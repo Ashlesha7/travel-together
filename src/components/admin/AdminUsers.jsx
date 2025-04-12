@@ -201,6 +201,7 @@ function AdminUsers() {
           }}
           onMouseEnter={() => handleMouseEnter(1)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => navigate('/admin/users')}
         >
           Users
         </div>
@@ -212,6 +213,14 @@ function AdminUsers() {
         onClick={() => navigate('/admin/trip-plans')}
         >
           Trip Plans
+          </div>
+        <div
+        style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(6) }}
+        onMouseEnter={() => handleMouseEnter(6)}
+        onMouseLeave={handleMouseLeave}
+        onClick={() => navigate("/admin/notifications")}
+        >
+          Notifications
           </div>
 
         <div

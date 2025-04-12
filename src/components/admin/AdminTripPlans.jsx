@@ -194,6 +194,15 @@ function AdminTripPlans() {
         </div>
 
         <div
+        style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(6) }}
+        onMouseEnter={() => handleMouseEnter(6)}
+        onMouseLeave={handleMouseLeave}
+        onClick={() => navigate("/admin/notifications")}
+        >
+          Notifications
+          </div>
+
+        <div
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(3) }}
           onMouseEnter={() => handleMouseEnter(3)}
           onMouseLeave={handleMouseLeave}
