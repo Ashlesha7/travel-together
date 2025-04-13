@@ -209,21 +209,54 @@ router.get("/conversations", auth, async (req, res) => {
       participants: userId,
     })
       .sort({ updatedAt: -1 })
-      // Populate both "fullName" and "profilePhoto" for each participant
-      .populate("participants", "fullName profilePhoto");
-
+      .lean(); // just lean here
+      const populated = await Conversation.populate(conversations, {
+        path: "participants",
+        select: "fullName profilePhoto",
+      });
+      
     // Simplify for frontend: include details of the other participant only
-    const convData = conversations.map((conv) => {
-      const otherParticipant = conv.participants.find(
-        (p) => String(p._id) !== String(userId)
-      );
-      return {
-        _id: conv._id,
-        userId: otherParticipant ? otherParticipant._id : null,
-        name: otherParticipant ? otherParticipant.fullName : "Unknown",
-        photo: otherParticipant ? otherParticipant.profilePhoto : "",
-      };
-    });
+    const convData = await Promise.all(
+      conversations.map(async (conv) => {
+        // Identify the other participant for display purposes
+        const otherParticipant = conv.participants.find(
+          (p) => String(p._id) !== String(userId)
+        );
+        
+        // Compute the unread messages count for this conversation for the logged-in user
+        const unreadCount = await Message.countDocuments({
+          conversationId: conv._id,
+          senderId: { $ne: userId },
+          readBy: { $ne: userId },
+        });
+    
+        // If there are unread messages, find the most recent unread one to get the sender's name
+        let lastUnreadSenderName = "";
+        if (unreadCount > 0) {
+          const lastUnread = await Message.findOne({
+            conversationId: conv._id,
+            senderId: { $ne: userId },
+            readBy: { $ne: userId },
+          })
+            .sort({ timestamp: -1 })
+            .lean();
+          if (lastUnread) {
+            const sender = await User.findById(lastUnread.senderId).lean();
+            lastUnreadSenderName = sender ? sender.fullName : "Unknown";
+          }
+        }
+        
+        return {
+          _id: conv._id,
+          userId: otherParticipant ? otherParticipant._id : null,
+          name: otherParticipant ? otherParticipant.fullName : "Unknown",
+          photo: otherParticipant ? otherParticipant.profilePhoto : "",
+          unreadCount,
+          lastUnreadSenderName,
+        };
+      })
+    );
+    
 
     res.json(convData);
   } catch (err) {
@@ -232,18 +265,6 @@ router.get("/conversations", auth, async (req, res) => {
   }
 });
 
-// 3) Fetch messages for a conversation
-router.get("/messages/:conversationId", auth, async (req, res) => {
-  try {
-    const { conversationId } = req.params;
-    // Optionally, verify the user is a participant before fetching messages
-    const messages = await Message.find({ conversationId }).sort({ timestamp: 1 });
-    res.json(messages);
-  } catch (err) {
-    console.error("Error fetching messages:", err);
-    res.status(500).json({ msg: "Server error", error: err.message });
-  }
-});
 
 // 4) Post a new message
 router.post("/messages", auth, async (req, res) => {
@@ -273,9 +294,8 @@ router.post("/messages", auth, async (req, res) => {
   }
 });
 
-// 5) Get unread message count for the logged-in user
-// A message is considered unread if it was sent by someone else and the user's ID is not in the readBy array.
-router.get("/messages/unreadCount", auth, async (req, res) => {
+// Global unread message count for the logged-in user (all conversations)
+router.get("/messages/unreadCountGlobal", auth, async (req, res) => {
   try {
     const unreadCount = await Message.countDocuments({
       senderId: { $ne: req.user.id },
@@ -283,7 +303,42 @@ router.get("/messages/unreadCount", auth, async (req, res) => {
     });
     res.status(200).json({ unreadCount });
   } catch (err) {
+    console.error("Error fetching global unread message count:", err);
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
+});
+
+
+// 5) Get unread message count for a specific conversation for the logged-in user
+router.get("/messages/unreadCount/:conversationId", auth, async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    // Validate conversationId
+    if (!mongoose.Types.ObjectId.isValid(conversationId)) {
+      return res.status(400).json({ msg: "Invalid conversationId" });
+    }
+    const unreadCount = await Message.countDocuments({
+      conversationId,                              // Only count messages in this conversation
+      senderId: { $ne: req.user.id },               // Messages not sent by the user
+      readBy: { $ne: req.user.id }                  // That haven’t been marked as read by the user
+    });
+    res.status(200).json({ unreadCount });
+  } catch (err) {
     console.error("Error fetching unread message count:", err);
+    res.status(500).json({ msg: "Server error", error: err.message });
+  }
+});
+
+
+// 3) Fetch messages for a conversation
+router.get("/messages/:conversationId([0-9a-fA-F]{24})", auth, async (req, res) => {
+  try {
+    const { conversationId } = req.params;
+    // Optionally, verify the user is a participant before fetching messages
+    const messages = await Message.find({ conversationId }).sort({ timestamp: 1 });
+    res.json(messages);
+  } catch (err) {
+    console.error("Error fetching messages:", err);
     res.status(500).json({ msg: "Server error", error: err.message });
   }
 });

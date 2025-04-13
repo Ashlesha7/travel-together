@@ -4,11 +4,17 @@ import { useParams } from "react-router-dom";
 import io from "socket.io-client";
 import Navigation from "./Navigation"; // Your existing Nav component
 import "./MessagingPage.css";
+import sendIcon from "../assets/Send.png";
 
 // Connect to Socket.IO on your backend with the JWT token in the auth payload
 const socket = io("http://localhost:8080", {
   auth: { token: localStorage.getItem("token") },
 });
+
+// A small helper function to validate a 24-char ObjectId
+function isValidObjectId(id) {
+  return /^[0-9a-fA-F]{24}$/.test(id);
+}
 
 const MessagingPage = ({ user }) => {
   const [conversations, setConversations] = useState([]);
@@ -47,6 +53,7 @@ const MessagingPage = ({ user }) => {
           if (foundConv) {
             setActiveConversationId(foundConv._id);
           } else {
+            // If not found, just use the URL param
             setActiveConversationId(initialConversationId);
           }
         }
@@ -57,6 +64,11 @@ const MessagingPage = ({ user }) => {
   // 2. Fetch messages for the active conversation
   useEffect(() => {
     if (!activeConversationId) return;
+    // **Check if activeConversationId is valid before calling the endpoint**
+    if (!isValidObjectId(activeConversationId)) {
+      console.error(`Invalid conversationId: ${activeConversationId}`);
+      return;
+    }
     const token = localStorage.getItem("token");
 
     axios
@@ -72,8 +84,11 @@ const MessagingPage = ({ user }) => {
   // 3. Join the Socket.IO room for the active conversation
   useEffect(() => {
     if (activeConversationId) {
-      socket.emit("joinConversation", activeConversationId);
-      console.log("Joined conversation room:", activeConversationId);
+      // Also check validity here (optional, but safe)
+      if (isValidObjectId(activeConversationId)) {
+        socket.emit("joinConversation", activeConversationId);
+        console.log("Joined conversation room:", activeConversationId);
+      }
     }
   }, [activeConversationId]);
 
@@ -101,32 +116,43 @@ const MessagingPage = ({ user }) => {
     };
   }, [user]);
 
-  // 4a. Periodically fetch unread count from the server (every 10 seconds)
-  useEffect(() => {
-    const token = localStorage.getItem("token");
-    const fetchUnreadCount = () => {
-      axios
-        .get("http://localhost:8080/api/notifications/unread", {
-          headers: { Authorization: token },
-        })
-        .then((res) => {
-          setUnreadCount(res.data.unreadCount);
-        })
-        .catch((err) => console.error("Error fetching unread count:", err));
-    };
+  // 4a. Periodically fetch unread count for the active conversation (every 10 seconds)
+// 4a. Periodically fetch unread count 
+useEffect(() => {
+  const token = localStorage.getItem("token");
+  const fetchUnreadCount = () => {
+    // If there's an active conversation, get unread count only for that conversation;
+    // otherwise, get the global unread count.
+    const endpoint = activeConversationId
+      ? `http://localhost:8080/api/messages/unreadCount/${activeConversationId}`
+      : "http://localhost:8080/api/messages/unreadCountGlobal";
+    axios
+      .get(endpoint, { headers: { Authorization: token } })
+      .then((res) => {
+        setUnreadCount(res.data.unreadCount);
+      })
+      .catch((err) => console.error("Error fetching unread count:", err));
+  };
 
-    fetchUnreadCount();
-    const intervalId = setInterval(fetchUnreadCount, 10000);
-    return () => clearInterval(intervalId);
-  }, []);
+  fetchUnreadCount();
+  const intervalId = setInterval(fetchUnreadCount, 10000);
+  return () => clearInterval(intervalId);
+}, [activeConversationId]);
+
+
 
   // 4b. When a conversation is opened, mark its messages as read and reset unread count
   useEffect(() => {
     if (activeConversationId) {
+      // Again, only call the endpoint if it's a valid ObjectId
+      if (!isValidObjectId(activeConversationId)) {
+        console.error(`Invalid conversationId for mark-read: ${activeConversationId}`);
+        return;
+      }
       const token = localStorage.getItem("token");
       axios
         .post(
-          "http://localhost:8080/api/notifications/mark-read",
+          "http://localhost:8080/api/messages/mark-read",
           { conversationId: activeConversationId },
           { headers: { Authorization: token } }
         )
@@ -191,6 +217,7 @@ const MessagingPage = ({ user }) => {
           )
           .then((convRes) => {
             const newConv = convRes.data;
+            // If this conversation isn't in our list, add it
             if (!conversations.find((c) => String(c._id) === String(newConv._id))) {
               setConversations((prev) => [...prev, newConv]);
             }
@@ -214,32 +241,41 @@ const MessagingPage = ({ user }) => {
       <div className="messaging-container">
         {/* Left Sidebar: Conversation List */}
         <div className="left-sidebar">
-          <h2 className="sidebar-title">Your Messages</h2>
-          <button className="new-conversation-btn" onClick={handleNewConversation}>
-            + New Conversation
-          </button>
-          {conversations.length === 0 ? (
-            <p>No conversations yet</p>
-          ) : (
-            conversations.map((conv) => {
-              const convId = conv._id;
-              const convName = conv.name || conv.fullName || "Unnamed";
-              return (
-                <div
-                  key={convId}
-                  className={`conversation-item ${
-                    activeConversationId && String(activeConversationId) === String(convId)
-                      ? "active"
-                      : ""
-                  }`}
-                  onClick={() => setActiveConversationId(convId)}
-                >
-                  <span className="conversation-name">{convName}</span>
-                </div>
-              );
-            })
-          )}
+  <h2 className="sidebar-title">Your Messages</h2>
+  <button className="new-conversation-btn" onClick={handleNewConversation}>
+    + New Conversation
+  </button>
+  {conversations.length === 0 ? (
+    <p>No conversations yet</p>
+  ) : (
+    conversations.map((conv) => {
+      const convId = conv._id;
+      const convName = conv.name || conv.fullName || "Unnamed";
+      return (
+        <div
+          key={convId}
+          className={`conversation-item ${
+            activeConversationId && String(activeConversationId) === String(convId)
+              ? "active"
+              : ""
+          }`}
+          onClick={() => setActiveConversationId(convId)}
+        >
+          <span className="conversation-name">
+            {convName}
+            {conv.unreadCount > 0 && (
+              <span className="new-message-indicator">
+                {" "}New 
+                {/* from <strong>{conv.lastUnreadSenderName}</strong> */}
+              </span>
+            )}
+          </span>
         </div>
+      );
+    })
+  )}
+</div>
+
 
         {/* Right Side: Chat Area */}
         <div className="chat-area">
@@ -298,7 +334,7 @@ const MessagingPage = ({ user }) => {
               onClick={handleSendMessage}
               disabled={!activeConversationId}
             >
-              <span role="img" aria-label="send"></span>
+              <img src={sendIcon} className="send-icon" alt="Send" />
             </button>
           </div>
         </div>
