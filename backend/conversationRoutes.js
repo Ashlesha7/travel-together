@@ -294,13 +294,21 @@ router.post("/messages", auth, async (req, res) => {
   }
 });
 
-// Global unread message count for the logged-in user (all conversations)
+// Global unread message count for the logged-in user (messages only in conversations the user participates in)
 router.get("/messages/unreadCountGlobal", auth, async (req, res) => {
   try {
+    const userId = req.user.id;
+    // Find all conversations where the user is a participant
+    const userConversations = await Conversation.find({ participants: userId }).select("_id");
+    const conversationIds = userConversations.map(conv => conv._id);
+
+    // Count messages only in those conversations that are not sent by the user and not marked as read by the user
     const unreadCount = await Message.countDocuments({
-      senderId: { $ne: req.user.id },
-      readBy: { $ne: req.user.id },
+      conversationId: { $in: conversationIds },
+      senderId: { $ne: userId },
+      readBy: { $ne: userId }
     });
+    
     res.status(200).json({ unreadCount });
   } catch (err) {
     console.error("Error fetching global unread message count:", err);

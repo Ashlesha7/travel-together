@@ -191,7 +191,10 @@ router.get("/notifications", auth, async (req, res) => {
   try {
     const notifications = await Notification.find({
       receiverId: req.user.id,
-      $or: [{ status: "pending" }, { type: "connectResponse" }],
+      $or: [
+        { status: "pending" },
+        { type: "connectResponse", status: "pending" }
+      ],
     }).sort({ createdAt: -1 });
     res.status(200).json(notifications);
   } catch (err) {
@@ -199,6 +202,7 @@ router.get("/notifications", auth, async (req, res) => {
     res.status(500).json({ msg: "Server error", error: err.message });
   }
 });
+
 
 // 3) Respond to a notification (Accept/Reject)
 router.post("/notifications/respond", auth, async (req, res) => {
@@ -300,16 +304,27 @@ router.post("/notifications/mark-read", auth, async (req, res) => {
     if (!notificationIds || (Array.isArray(notificationIds) && notificationIds.length === 0)) {
       return res.status(400).json({ msg: "Missing notificationIds" });
     }
-    await Notification.updateMany(
-      { _id: { $in: notificationIds }, receiverId: req.user.id },
+    
+    // Explicitly cast the notificationIds and the receiver's id to ObjectId
+    const castNotificationIds = notificationIds.map(id => mongoose.Types.ObjectId(id));
+    const receiverObjectId = mongoose.Types.ObjectId(req.user.id);
+
+    // Update notifications that match
+    const result = await Notification.updateMany(
+      { 
+        _id: { $in: castNotificationIds },
+        receiverId: receiverObjectId 
+      },
       { status: "read" }
     );
-    res.status(200).json({ msg: "Notifications marked as read" });
+    console.log("Modified notifications count:", result.modifiedCount);
+    res.status(200).json({ msg: "Notifications marked as read", modifiedCount: result.modifiedCount });
   } catch (err) {
     console.error("Error marking notifications as read:", err);
     res.status(500).json({ msg: "Server error", error: err.message });
   }
 });
+
 
 // 7) Fetch notification history for the logged-in user (last 2 months)
 // This endpoint returns all notifications (read or unread) created within the last 2 months.

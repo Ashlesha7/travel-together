@@ -46,13 +46,43 @@ const NotificationBell = ({ user }) => {
       );
   }, [showHistory]);
 
+  // NEW: Function to mark all pending notifications as read
+  const handleMarkAllAsRead = () => {
+    const token = localStorage.getItem("token");
+    if (!token) return;
+    // Get all current notification IDs
+    const pendingIds = notifications.map((notif) => notif._id);
+    if (pendingIds.length === 0) return;
+
+    axios
+      .post(
+        "http://localhost:8080/api/notifications/mark-read",
+        { notificationIds: pendingIds },
+        { headers: { Authorization: token } }
+      )
+      .then(() => {
+        // Clear notifications state since they're now marked as read
+        setNotifications([]);
+        // Optionally, also clear historyNotifications if desired:
+        setHistoryNotifications([]);
+      })
+      .catch((err) =>
+        console.error("Error marking all notifications as read:", err)
+      );
+  };
+
+  // Modified toggleDropdown: When opening, mark all notifications as read.
   const toggleDropdown = () => {
+    if (!showDropdown) {
+      // If the dropdown is about to open, mark all as read
+      handleMarkAllAsRead();
+    }
     setShowDropdown((prev) => !prev);
     // If closing the dropdown, reset to recent notifications view.
     if (showDropdown) setShowHistory(false);
   };
 
-  // New: Function to mark a notification as read via the backend
+  // Function to mark a single notification as read (existing)
   const handleMarkAsRead = (notifId) => {
     const token = localStorage.getItem("token");
     axios
@@ -180,7 +210,6 @@ const NotificationBell = ({ user }) => {
                                 console.error("Error creating conversation:", err);
                               });
                           }}
-                          
                           style={{ cursor: "pointer" }}
                         >
                           <p>{notif.message}</p>

@@ -46,6 +46,7 @@ body, html {
   width: 100vw;
   display: flex;
   align-items: center;
+  justify-content: space-between; 
   padding: 20px 50px;
   background: transparent;
 
@@ -281,4 +282,117 @@ footer {
 .nav-buttons a button:hover {
   background: #28352A;
   transform: scale(1.05);
+}
+
+
+
+.homepage-notif-container {
+  position: relative;
+  margin-left: 15px;
+}
+
+.homepage-notif-icon {
+  width: 30px;
+  height: 30px;
+}
+
+.homepage-notif-badge {
+  position: absolute;
+  top: -5px;
+  right: -5px;
+  background: red;
+  color: #fff;
+  border-radius: 50%;
+  padding: 2px 6px;
+  font-size: 12px;
+}
+
+/* Reuse the same dropdown classes as in your NotificationBell */
+.notification-dropdown {
+  position: absolute;
+  top: 40px;
+  right: 0;
+  width: 300px;
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.15);
+  z-index: 1000;
+  padding: 0.5rem 0;
+  font-family: "Arial", sans-serif;
+  color: black;
+}
+
+.notification-dropdown-header {
+  padding: 0.5rem 1rem;
+  border-bottom: 1px solid #eee;
+  text-align: center;
+  background-color: #f9f9f9;
+}
+
+.notification-dropdown-header h4 {
+  margin: 0;
+  font-size: 16px;
+  color: #2C3C30;
+}
+
+.notification-item {
+  background-color: #F8F8F8;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  margin: 0.5rem 1rem;
+  padding: 0.75rem;
+  position: relative;
+  transition: background 0.2s ease;
+}
+
+.notification-item:hover {
+  background-color: #f1f1f1;
+}
+
+.notification-actions {
+  margin-top: 0.5rem;
+  display: flex;
+  justify-content: flex-end;
+  gap: 0.5rem;
+}
+
+.notification-actions button {
+  background-color: #2C3C30;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.notification-dropdown-footer {
+  padding: 0.5rem 1rem;
+  border-top: 1px solid #eee;
+  background-color: #f9f9f9;
+  text-align: center;
+}
+
+.view-all-btn {
+  background-color: #2C3C30;
+  color: #fff;
+  border: none;
+  border-radius: 4px;
+  padding: 0.4rem 0.8rem;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: background 0.2s ease;
+}
+
+.view-all-btn:hover {
+  opacity: 0.85;
+}
+
+.message-badge {
+  color: #d00;          /* Red color to attract attention */
+  font-size: 0.85rem;
+  font-weight: bold;
+  margin-left: 5px;
 }
