@@ -3,7 +3,6 @@ import { Link } from "react-router-dom";
 import axios from "axios";
 import "./HomePage.css";
 
-// Different logos for header & footer
 import headerLogo from "../assets/logo.png";
 import footerLogo from "../assets/footerlogo.png";
 
@@ -14,13 +13,13 @@ import pokhara from "../assets/pokhara.jpg";
 import mustang from "../assets/mustang.jpg";
 import langtang from "../assets/langtang.jpg";
 
-// Custom notification icon
+
 import notificationIcon from "../assets/notification.png";
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
 
-  // Notifications state (for the custom notification icon)
+  // Notifications state 
   const [homepageNotifications, setHomepageNotifications] = useState([]);
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
 
@@ -40,7 +39,7 @@ const HomePage = () => {
     }
   }, []);
 
-  // 2. Fetch notifications for this user (for the notification icon)
+  // 2. Fetch notifications for this user 
   useEffect(() => {
     if (!user) return;
     const token = localStorage.getItem("token");
@@ -60,7 +59,7 @@ const HomePage = () => {
       );
   }, [user]);
 
-  // 3. Poll notifications every 10 seconds (optional)
+  // 3. Poll notifications every 10 seconds 
   useEffect(() => {
     if (!user) return;
     const token = localStorage.getItem("token");
@@ -109,7 +108,7 @@ const HomePage = () => {
     setShowNotifDropdown((prev) => !prev);
   };
 
-  // Accept/Reject handlers for notifications (as in your main nav)
+  // Accept/Reject handlers for notifications 
   const handleAccept = (notifId, senderName) => {
     const token = localStorage.getItem("token");
     axios
@@ -160,7 +159,7 @@ const HomePage = () => {
             </Link>
           </div>
 
-          {/* Right Container: Nav Buttons, Message Alert, Notification Icon, and Auth/Profile */}
+          {/*  Nav Buttons, Message Alert, Notification Icon, and Auth/Profile */}
           <div className="navbar-right">
             <div className="nav-buttons">
               <Link to="/start-trip">

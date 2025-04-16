@@ -2,16 +2,16 @@ import React, { useState, useEffect, useRef } from "react";
 import axios from "axios";
 import { useParams } from "react-router-dom";
 import io from "socket.io-client";
-import Navigation from "./Navigation"; // Your existing Nav component
+import Navigation from "./Navigation"; 
 import "./MessagingPage.css";
 import sendIcon from "../assets/Send.png";
 
-// Connect to Socket.IO on your backend with the JWT token in the auth payload
+// Connect to Socket.IO on your backend with the JWT token
 const socket = io("http://localhost:8080", {
   auth: { token: localStorage.getItem("token") },
 });
 
-// A small helper function to validate a 24-char ObjectId
+//  helper function to validate a 24-char ObjectId
 function isValidObjectId(id) {
   return /^[0-9a-fA-F]{24}$/.test(id);
 }
@@ -23,11 +23,11 @@ const MessagingPage = ({ user }) => {
   const [newMessage, setNewMessage] = useState("");
   const [unreadCount, setUnreadCount] = useState(0); // State for persistent unread count
 
-  // Read "conversationId" from the URL (e.g., /messages/:conversationId)
+  // Read "conversationId" from the URL 
   const { conversationId: initialConversationId } = useParams();
   const messagesEndRef = useRef(null);
 
-  // Log user object for debugging
+  // Log user object 
   useEffect(() => {
     console.log("Logged-in user:", user);
   }, [user]);
@@ -84,7 +84,7 @@ const MessagingPage = ({ user }) => {
   // 3. Join the Socket.IO room for the active conversation
   useEffect(() => {
     if (activeConversationId) {
-      // Also check validity here (optional, but safe)
+      // Also check validity 
       if (isValidObjectId(activeConversationId)) {
         socket.emit("joinConversation", activeConversationId);
         console.log("Joined conversation room:", activeConversationId);
@@ -277,7 +277,7 @@ useEffect(() => {
 </div>
 
 
-        {/* Right Side: Chat Area */}
+        {/*  Chat Area */}
         <div className="chat-area">
           <div className="chat-header">
             {activeConv ? (

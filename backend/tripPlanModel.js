@@ -2,7 +2,7 @@ const mongoose = require("mongoose");
 
 const TripPlanSchema = new mongoose.Schema({
   user: { type: mongoose.Schema.Types.ObjectId, ref: "User", required: true }, 
-  userName: { type: String }, // Store user's name for history purposes
+  userName: { type: String }, 
   tripType: { type: String, required: true },
   tripName: { type: String, required: true },
   shortDescription: { type: String, required: true },
@@ -12,8 +12,8 @@ const TripPlanSchema = new mongoose.Schema({
   startDate: { type: Date, required: true },
   endDate: { type: Date, required: true },
   markerPosition: { type: Object },
-  startCoordinates: { type: Object }, // New field for start location coordinates
-  endCoordinates: { type: Object },   // New field for destination coordinates
+  startCoordinates: { type: Object }, 
+  endCoordinates: { type: Object },   
   status: { type: String, enum: ["planned", "completed"], default: "planned" }, // Status tracking
   createdAt: { type: Date, default: Date.now },
 });

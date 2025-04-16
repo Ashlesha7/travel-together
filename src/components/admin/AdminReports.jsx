@@ -1,4 +1,4 @@
-// src/components/admin/AdminReports.jsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import {
@@ -47,7 +47,7 @@ function AdminReports() {
       : {};
   };
 
-  // Layout styles (similar to AdminDashboard)
+  // Layout styles 
   const containerStyle = {
     display: 'flex',
     width: '100vw',
@@ -59,7 +59,7 @@ function AdminReports() {
     overflow: 'hidden',
   };
 
-  // Sidebar: gradient background
+  // Sidebar
   const sidebarStyle = {
     width: '240px',
     height: '100%',
@@ -304,12 +304,12 @@ function AdminReports() {
           </ResponsiveContainer>
         </div>
 
-        {/* New: Status Distribution Chart */}
+        {/* Status Distribution Chart */}
         <div style={{ marginBottom: '40px' }}>
           <h3 style={{ textAlign: 'center', color: '#2c3e50' }}>Trip Status Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              data={reportData.statusDistribution} // expected format: [{ status: 'planned', count: X }, { status: 'completed', count: Y }]
+              data={reportData.statusDistribution} 
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />
@@ -326,7 +326,7 @@ function AdminReports() {
           <h3 style={{ textAlign: 'center', color: '#2c3e50' }}>Notifications Distribution</h3>
           <ResponsiveContainer width="100%" height={300}>
             <BarChart
-              data={reportData.notificationsDistribution}  // expected format: [{ status: "pending", count: X }, ...]
+              data={reportData.notificationsDistribution}  
               margin={{ top: 20, right: 30, left: 20, bottom: 5 }}
             >
               <CartesianGrid strokeDasharray="3 3" />

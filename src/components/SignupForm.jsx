@@ -400,17 +400,17 @@ function SignupForm({ switchToLogin }) {
 
         try {
             setLoading(true);
-            console.log("📤 Sending signup request...", data);
+            console.log(" Sending signup request...", data);
 
             const response = await axios.post("http://localhost:8080/api/signup", data, {
                 headers: { "Content-Type": "multipart/form-data" },
             });
 
-            console.log("✅ Signup successful:", response.data);
+            console.log(" Signup successful:", response.data);
             alert(response.data.msg || "Signup successful!");
             switchToLogin(); // Switch to login form on success
         } catch (error) {
-            console.error("❌ Signup failed:", error.response?.data);
+            console.error("Signup failed:", error.response?.data);
             alert(error.response?.data?.msg || "Signup failed. Please try again.");
         } finally {
             setLoading(false);
@@ -428,7 +428,7 @@ function SignupForm({ switchToLogin }) {
             <h2>Signup - Step {currentStep}</h2>
             <form onSubmit={handleSubmit}>
 
-                {/* STEP 1: Basic Details */}
+                {/*  Basic Details */}
                 {currentStep === 1 && (
                     <div className="form-step active">
                         <label htmlFor="fullName">Full Name</label>
@@ -477,7 +477,7 @@ function SignupForm({ switchToLogin }) {
                     </div>
                 )}
 
-                {/* STEP 2: Citizenship Information */}
+                {/* Citizenship Information */}
                 {currentStep === 2 && (
                     <div className="form-step active">
                         <label htmlFor="citizenshipNumber">Citizenship Number</label>
@@ -508,7 +508,7 @@ function SignupForm({ switchToLogin }) {
                     </div>
                 )}
 
-                {/* STEP 3: Profile Photo & Password */}
+                {/*  Profile Photo & Password */}
                 {currentStep === 3 && (
                     <div className="form-step active">
                         <label htmlFor="profilePhoto">Upload Your Photo</label>

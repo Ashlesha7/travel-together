@@ -78,6 +78,7 @@
   display: flex;
   flex-direction: column;
   gap: 6px;  /* spacing between label and input */
+  margin-bottom: 12px;
 }
 
 .form-group label {
@@ -90,7 +91,7 @@
 .icon-input {
   display: flex;
   align-items: center;
-  gap: 10px;               /* use gap for spacing instead of margin-right */
+  gap: 15px;               /* use gap for spacing instead of margin-right */
   background-color: #eae7dc; 
   border-radius: 6px;
   padding: 0.5rem;
@@ -104,6 +105,7 @@
   justify-content: center;
   align-items: center;
   border-radius: 4px;
+  margin-bottom: 27px; 
 }
 
 .icon-block img {
@@ -309,4 +311,5 @@
 .form-group .plain-textarea {
   box-shadow: inset 0 1px 2px rgba(0, 0, 0, 0.2);
   border: 1px solid #2C3C30;
+  height: 75px;
 }

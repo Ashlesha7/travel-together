@@ -1,4 +1,4 @@
-// src/components/admin/AdminDashboard.jsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -28,7 +28,7 @@ function AdminDashboard() {
     fetchDashboardData();
   }, []);
 
-  // Root container: full viewport using vw/vh
+  // Root container
   const containerStyle = {
     display: 'flex',
     width: '100vw',
@@ -40,11 +40,11 @@ function AdminDashboard() {
     overflow: 'hidden',
   };
 
-  // Sidebar: fixed width, full height, gradient background
+  // Sidebar
   const sidebarStyle = {
     width: '240px',
     height: '100%',
-    background: 'linear-gradient(135deg, #2c3e50, #34495e)', // Slight gradient
+    background: 'linear-gradient(135deg, #2c3e50, #34495e)',
     color: '#ecf0f1',
     padding: '20px',
     boxSizing: 'border-box',
@@ -67,14 +67,14 @@ function AdminDashboard() {
     transition: 'background-color 0.3s',
   };
 
-  // When hovered, we apply a slightly darker background
+  
   const getSidebarItemDynamicStyle = (index) => {
     return hoveredItem === index
       ? { backgroundColor: 'rgba(255, 255, 255, 0.1)' }
       : {};
   };
 
-  // Main content: fills remaining space and scrolls vertically if needed
+  // Main content
   const mainContentStyle = {
     flex: 1,
     height: '100%',
@@ -89,7 +89,7 @@ function AdminDashboard() {
     color: '#2c3e50',
   };
 
-  // Grid layout for dashboard widgets
+  //  layout for dashboard widgets
   const gridStyle = {
     display: 'grid',
     gridTemplateColumns: 'repeat(auto-fit, minmax(250px, 1fr))',
@@ -104,7 +104,6 @@ function AdminDashboard() {
     boxSizing: 'border-box',
   };
 
-  // Helper functions for mouse events
   const handleMouseEnter = (index) => setHoveredItem(index);
   const handleMouseLeave = () => setHoveredItem(null);
 
@@ -208,7 +207,7 @@ function AdminDashboard() {
                 )}
               </ul>
             </div>
-            {/* Additional widgets (e.g., Pending Notifications, System Health) can be added here */}
+            
           </div>
         ) : (
           <p>Loading dashboard data...</p>

@@ -1,13 +1,13 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
-import { useNavigate } from "react-router-dom"; // for navigation
-import "./NotificationBell.css"; // Create and adjust as needed
+import { useNavigate } from "react-router-dom"; 
+import "./NotificationBell.css"; 
 
 const NotificationBell = ({ user }) => {
   const [notifications, setNotifications] = useState([]);
   const [historyNotifications, setHistoryNotifications] = useState([]);
   const [showDropdown, setShowDropdown] = useState(false);
-  const [showHistory, setShowHistory] = useState(false); // State to toggle history view
+  const [showHistory, setShowHistory] = useState(false);
   const navigate = useNavigate();
 
   // Fetch recent notifications for the current user
@@ -30,7 +30,7 @@ const NotificationBell = ({ user }) => {
       );
   }, [user]);
 
-  // When showHistory is true, fetch the notification history (e.g., last 2 months)
+  // When showHistory is true, fetch the notification history 
   useEffect(() => {
     if (!showHistory) return;
     const token = localStorage.getItem("token");
@@ -46,7 +46,7 @@ const NotificationBell = ({ user }) => {
       );
   }, [showHistory]);
 
-  // NEW: Function to mark all pending notifications as read
+  //  Function to mark all pending notifications as read
   const handleMarkAllAsRead = () => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -63,7 +63,7 @@ const NotificationBell = ({ user }) => {
       .then(() => {
         // Clear notifications state since they're now marked as read
         setNotifications([]);
-        // Optionally, also clear historyNotifications if desired:
+        //also clear historyNotifications if desired:
         setHistoryNotifications([]);
       })
       .catch((err) =>
@@ -71,7 +71,7 @@ const NotificationBell = ({ user }) => {
       );
   };
 
-  // Modified toggleDropdown: When opening, mark all notifications as read.
+  //  When opening, mark all notifications as read.
   const toggleDropdown = () => {
     if (!showDropdown) {
       // If the dropdown is about to open, mark all as read
@@ -187,7 +187,7 @@ const NotificationBell = ({ user }) => {
                 notifications.map((notif) => {
                   if (notif.type === "connectResponse") {
                     if (notif.status === "accepted") {
-                      // Accepted connect response: clickable to navigate to messaging page.
+                      // Accepted connect response to navigate to messaging page.
                       return (
                         <div
                           key={notif._id}
@@ -223,7 +223,7 @@ const NotificationBell = ({ user }) => {
                       );
                     }
                   } else {
-                    // Pending connection request notifications with action buttons
+                    // Pending connection request notifications 
                     return (
                       <div key={notif._id} className="notification-item">
                         <p>{notif.senderName} wants to connect with you.</p>

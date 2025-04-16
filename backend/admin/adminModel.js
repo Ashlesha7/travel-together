@@ -1,4 +1,4 @@
-// backend/models/adminModel.js
+
 const mongoose = require('mongoose');
 
 const adminSchema = new mongoose.Schema(

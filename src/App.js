@@ -244,7 +244,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Route, Routes, Navigate } from "react-router-dom";
-import { GoogleOAuthProvider } from '@react-oauth/google'; // NEW: Import Google OAuth Provider
+import { GoogleOAuthProvider } from '@react-oauth/google'; 
 import HomePage from './components/HomePage';
 import LoginForm from './components/LoginForm';
 import SignupForm from './components/SignupForm';
@@ -252,7 +252,7 @@ import Profile from './components/Profile';
 import StartTrip from "./components/StartTrip";
 import Discover from "./components/Discover";
 import MessagingPage from "./components/MessagingPage";
-import ForgotPassword from "./components/ForgotPassword"; // NEW: Forgot Password component
+import ForgotPassword from "./components/ForgotPassword"; 
 import './App.css';
 import 'leaflet/dist/leaflet.css';
 import AdminLogin from './components/admin/AdminLogin';
@@ -271,14 +271,14 @@ function App() {
   const [isLoginActive, setIsLoginActive] = useState(true);
   const [user, setUser] = useState(null);
 
-  // Simple check to see if an admin token exists
+  //  check to see if an admin token exists
   const isAdminAuthenticated = !!localStorage.getItem('adminToken');
 
   // On mount, retrieve user from localStorage (if available)
   useEffect(() => {
     const storedUser = localStorage.getItem("user");
     if (storedUser) {
-      setUser(JSON.parse(storedUser)); // user object with { id, fullName, email, ... }
+      setUser(JSON.parse(storedUser)); 
     }
   }, []);
 
@@ -286,7 +286,7 @@ function App() {
   const switchToLogin = () => setIsLoginActive(true);
 
   return (
-    // Wrap your app inside the GoogleOAuthProvider
+    // Wrapping  app inside the GoogleOAuthProvider
     <GoogleOAuthProvider clientId="769192409997-3kh4bsfskdr19o86c01hpsf4tqdfor82.apps.googleusercontent.com">
       <Router>
         <Routes>

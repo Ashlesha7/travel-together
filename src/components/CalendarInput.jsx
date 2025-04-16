@@ -2,11 +2,7 @@
 import React, { forwardRef } from "react";
 import iconCalendar from "../assets/calendar.png";
 
-/**
- * This component mimics your "green icon + text field" but triggers
- * the calendar when clicked. React DatePicker will inject props like
- * `value` (the formatted date) and `onClick`.
- */
+
 const CalendarInput = forwardRef(({ value, onClick, placeholder }, ref) => {
   return (
     <div className="icon-input" onClick={onClick} ref={ref}>

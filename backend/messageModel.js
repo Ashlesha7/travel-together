@@ -24,7 +24,7 @@
 
 
 const mongoose = require("mongoose");
-const fieldEncryption = require("mongoose-field-encryption").fieldEncryption; // Import the encryption plugin
+const fieldEncryption = require("mongoose-field-encryption").fieldEncryption; 
 
 const messageSchema = new mongoose.Schema({
   conversationId: {

@@ -1,9 +1,7 @@
 import React, { useState, useEffect, useRef } from "react";
 
 /**
- * A reusable autocomplete component that queries OpenStreetMap's Nominatim API.
- * 
- * Props:
+ 
  *  - value (string): current text value for the input
  *  - onChange (function): called when user types or selects a place
  *  - onSelect (function): called with { lat, lon, displayName } when user clicks a suggestion
@@ -75,7 +73,7 @@ function OpenStreetMapAutocomplete({ value, onChange, onSelect }) {
   };
 
   const handleBlur = (e) => {
-    // If user clicks outside, hide the dropdown
+    //  hide the dropdown 
     if (!containerRef.current.contains(e.relatedTarget)) {
       setShowDropdown(false);
     }

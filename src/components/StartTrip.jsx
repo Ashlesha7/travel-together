@@ -1,23 +1,23 @@
 import React, { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-import axios from "axios"; // Added for both profile fetching and posting trip plans
+import axios from "axios"; 
 import Navigation from "./Navigation";
 import NepalMap from "./NepalMap";
 import "./StartTrip.css";
 import Footer from "./Footer";
 
-// Placeholder images - replace with your own
+
 import roadTripImg from "../assets/roadTrip.jpg";
 import adventureImg from "../assets/adventure.jpg";
 import citiesImg from "../assets/cities.jpg";
 
-// Example icons (replace with your actual Figma icons)
+
 import iconLocation from "../assets/location.png";
 
-// Import the OSM Autocomplete component
+
 import OpenStreetMapAutocomplete from "./OpenStreetMapAutocomplete";
 
-// Import ReactDatePicker and the custom CalendarInput component
+
 import ReactDatePicker from "react-datepicker";
 import "react-datepicker/dist/react-datepicker.css";
 import CalendarInput from "./CalendarInput";
@@ -42,13 +42,13 @@ const StartTrip = () => {
   // Marker on the map
   const [markerPosition, setMarkerPosition] = useState(null);
 
-  // State to control the location modal
+  // to control the location modal
   const [showLocationModal, setShowLocationModal] = useState(false);
 
-  // State to control the "See samples" modal
+  //  to control the "See samples" modal
   const [showSamplesModal, setShowSamplesModal] = useState(false);
 
-  // Profile fetching state
+  // Profile fetching 
   const [user, setUser] = useState(null);
 
   //START-END COORDINATES FOR ROUTE VISUALIZATION 
@@ -111,7 +111,7 @@ const StartTrip = () => {
     setShowLocationModal(false);
   };
 
-  // Updated handleSubmit: after validation, POST trip plan data
+  //  handleSubmit: after validation, POST trip plan data
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -172,8 +172,8 @@ const StartTrip = () => {
       startDate,
       endDate,
       markerPosition,
-      startCoordinates, // new field
-      endCoordinates,   // new field
+      startCoordinates, 
+      endCoordinates,   
     };
 
     try {
@@ -330,7 +330,7 @@ const StartTrip = () => {
                 };
                 setCurrentLocation(locData.display_name || locData.displayName);
                 setMarkerPosition(pos);
-                //setStartCoordinates(pos); // New line: save start coordinates
+                //setStartCoordinates(pos); 
                  }}
                  />
 
@@ -406,7 +406,7 @@ const StartTrip = () => {
                   };
                   setMeetupLocation(locData.display_name || locData.displayName);
                   setMarkerPosition(pos);
-                  setStartCoordinates(pos); // Now use the meetup point as the route start
+                  setStartCoordinates(pos); 
                 }}
               />
             </div>

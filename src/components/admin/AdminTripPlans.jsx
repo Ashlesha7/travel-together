@@ -1,4 +1,4 @@
-// src/components/admin/AdminTripPlans.jsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -71,7 +71,7 @@ function AdminTripPlans() {
       : {};
   };
 
-  // Layout styles (similar to AdminDashboard)
+  // Layout styles 
   const containerStyle = {
     display: 'flex',
     width: '100vw',
@@ -83,7 +83,7 @@ function AdminTripPlans() {
     overflow: 'hidden',
   };
 
-  // Sidebar: gradient background
+  // Sidebar
   const sidebarStyle = {
     width: '240px',
     height: '100%',
@@ -109,7 +109,7 @@ function AdminTripPlans() {
     transition: 'background-color 0.3s',
   };
 
-  // Main content: table with trip plans
+  // Main content
   const mainContentStyle = {
     flex: 1,
     height: '100%',

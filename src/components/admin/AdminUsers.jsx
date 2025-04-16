@@ -1,4 +1,4 @@
-// src/components/admin/AdminUsers.jsx
+
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -44,13 +44,13 @@ function AdminUsers() {
     }
   };
 
-  // New: open modal with selected user details
+  //  open modal with selected user details
   const handleViewDetails = (user) => {
     setSelectedUser(user);
     setShowModal(true);
   };
 
-  // New: close modal
+  // close modal
   const closeModal = () => {
     setShowModal(false);
     setSelectedUser(null);
@@ -192,7 +192,7 @@ function AdminUsers() {
           Dashboard
         </div>
 
-        {/* Highlight “Users” by default */}
+        {/* Highlight “Users” */}
         <div
           style={{ 
             ...sidebarItemStyle, 
@@ -253,7 +253,7 @@ function AdminUsers() {
         </div>
       </div>
 
-      {/* Main Content Area: Full table of users */}
+      {/* Main Content Area */}
       <div style={mainContentStyle}>
         <h2 style={headingStyle}>User Management</h2>
         {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}

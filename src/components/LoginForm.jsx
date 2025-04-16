@@ -166,7 +166,7 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google'; // NEW: Import the GoogleLogin component
+import { GoogleLogin } from '@react-oauth/google'; 
 
 
 function LoginForm({ switchToSignup }) {
@@ -197,7 +197,7 @@ function LoginForm({ switchToSignup }) {
       alert(response.data.message);
 
       // Redirect user after login
-      window.location.href = "/dashboard"; // Change this to your desired route
+      window.location.href = "/dashboard"; 
     } catch (error) {
       console.error("❌ Login failed:", error.response?.data);
       alert(error.response?.data?.message || 'Login failed. Please try again.');
@@ -206,9 +206,9 @@ function LoginForm({ switchToSignup }) {
     }
   };
 
-  // Remove the dummy token code and use the GoogleLogin component to get a real token
+  
   const handleGoogleSuccess = async (credentialResponse) => {
-    // The real token is obtained here from Google via the OAuth library
+    
     const googleIdToken = credentialResponse.credential;
     try {
       console.log("Google token received:", googleIdToken);
@@ -226,7 +226,7 @@ function LoginForm({ switchToSignup }) {
     }
   };
 
-  // NEW: Handler for errors from the GoogleLogin component
+  
   const handleGoogleError = () => {
     console.error("Google sign in was unsuccessful.");
     alert("Google sign in was unsuccessful. Please try again.");
@@ -267,14 +267,14 @@ function LoginForm({ switchToSignup }) {
           </button>
         </p>
 
-        {/* NEW: Forgot Password Link */}
+        {/* Forgot Password Link */}
         <p className="forgot-password">
           <Link to="/forgot-password" className="forgot-password-link">
             Forgot Password?
           </Link>
         </p>
 
-        {/* NEW: Google Sign-In Button using the GoogleLogin component */}
+        {/* Google Sign-In Button using the GoogleLogin component */}
         <div className="google-auth-btn-container">
           <GoogleLogin
             onSuccess={handleGoogleSuccess}

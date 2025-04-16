@@ -3,10 +3,9 @@ import axios from "axios";
 import { useNavigate } from "react-router-dom";
 
 function AdminNotifications() {
-  // State that holds total count and an array of notifications
   const [notificationsData, setNotificationsData] = useState({ total: 0, notifications: [] });
   const [error, setError] = useState("");
-  const [statusFilter, setStatusFilter] = useState(""); // Optional filter by status
+  const [statusFilter, setStatusFilter] = useState(""); 
   const [page, setPage] = useState(1);
   const limit = 20; // Items per page
 
@@ -20,7 +19,7 @@ function AdminNotifications() {
           headers: { Authorization: `Bearer ${token}` },
           params: { status: statusFilter, page, limit }
         });
-        // Assuming backend returns { total, notifications: [...] }
+        
         setNotificationsData(res.data);
       } catch (err) {
         console.error("Error fetching admin notifications:", err);
@@ -30,9 +29,7 @@ function AdminNotifications() {
     fetchNotifications();
   }, [statusFilter, page]);
 
-  // --------------------------------------------------------------------
-  // Sidebar and Layout styles – these match your other admin pages
-  // --------------------------------------------------------------------
+  // Sidebar and Layout styles 
   const containerStyle = {
     display: "flex",
     width: "100vw",
@@ -120,9 +117,9 @@ function AdminNotifications() {
     color: "#fff"
   };
 
-  // --------------------------------------------------------------------
-  // Sidebar hover effects (using state similar to other admin files)
-  // --------------------------------------------------------------------
+  
+  // Sidebar hover effects 
+ 
   const [hoveredItem, setHoveredItem] = useState(null);
 
   const handleMouseEnter = (index) => setHoveredItem(index);
@@ -132,9 +129,8 @@ function AdminNotifications() {
     return hoveredItem === index ? { backgroundColor: "rgba(255, 255, 255, 0.1)" } : {};
   };
 
-  // --------------------------------------------------------------------
+  
   // Render the component
-  // --------------------------------------------------------------------
   return (
     <div style={containerStyle}>
       {/* Sidebar Navigation */}

@@ -2,7 +2,7 @@ const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
 const TripPlan = require("./tripPlanModel");
-const User = require("./userModel"); // Import User model
+const User = require("./userModel"); 
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
 
 // Middleware to check token
@@ -18,7 +18,7 @@ const auth = (req, res, next) => {
   }
 };
 
-// ✅ Create a new trip plan
+//  Create a new trip plan
 router.post("/trip-plans", auth, async (req, res) => {
   try {
     const {
@@ -105,7 +105,7 @@ router.get("/trip-plans", auth, async (req, res) => {
   }
 });
 
-// ✅ Mark trip as completed manually
+//Mark trip as completed manually
 router.patch("/trip-plans/:tripId/complete", auth, async (req, res) => {
   try {
     const trip = await TripPlan.findById(req.params.tripId);

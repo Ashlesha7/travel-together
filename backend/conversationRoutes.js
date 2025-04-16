@@ -139,20 +139,20 @@
 const express = require("express");
 const router = express.Router();
 const jwt = require("jsonwebtoken");
-const mongoose = require("mongoose"); // For casting IDs
+const mongoose = require("mongoose"); 
 const Conversation = require("./conversationModel");
 const Message = require("./messageModel");
-const User = require("./userModel"); // For user lookups if needed
+const User = require("./userModel"); 
 
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
 
-// Simple auth middleware
+//  auth middleware
 function auth(req, res, next) {
   const token = req.header("Authorization");
   if (!token) return res.status(401).json({ msg: "Access Denied" });
   try {
     const verified = jwt.verify(token, JWT_SECRET);
-    req.user = verified; // { id: "<some user id>", ... }
+    req.user = verified; 
     next();
   } catch (error) {
     res.status(400).json({ msg: "Invalid token" });
@@ -215,7 +215,7 @@ router.get("/conversations", auth, async (req, res) => {
         select: "fullName profilePhoto",
       });
       
-    // Simplify for frontend: include details of the other participant only
+    //  for frontend: include details of the other participant only
     const convData = await Promise.all(
       conversations.map(async (conv) => {
         // Identify the other participant for display purposes
@@ -282,7 +282,7 @@ router.post("/messages", auth, async (req, res) => {
     });
     await newMessage.save();
 
-    // Optionally update the conversation's updatedAt timestamp
+    //  update the conversation's updatedAt timestamp
     await Conversation.findByIdAndUpdate(conversationId, { updatedAt: new Date() });
 
     // Re-query the saved message so that the encryption plugin auto-decrypts the text
@@ -342,7 +342,7 @@ router.get("/messages/unreadCount/:conversationId", auth, async (req, res) => {
 router.get("/messages/:conversationId([0-9a-fA-F]{24})", auth, async (req, res) => {
   try {
     const { conversationId } = req.params;
-    // Optionally, verify the user is a participant before fetching messages
+    //  verify the user is a participant before fetching messages
     const messages = await Message.find({ conversationId }).sort({ timestamp: 1 });
     res.json(messages);
   } catch (err) {

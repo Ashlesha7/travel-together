@@ -1,4 +1,4 @@
-// src/components/admin/AdminLogin.jsx
+
 import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -21,7 +21,7 @@ function AdminLogin() {
     }
   };
 
-  // Updated containerStyle to fill the screen
+  
   const containerStyle = {
     display: 'flex',
     width: '100vw',

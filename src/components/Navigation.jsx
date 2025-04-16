@@ -1,14 +1,14 @@
-import React, { useState, useEffect } from "react"; // Added useState, useEffect
-import axios from "axios"; // For API calls
+import React, { useState, useEffect } from "react";
+import axios from "axios"; 
 import "./Navigation.css";
-import logo from "../assets/logo.png"; // Adjust path if needed
+import logo from "../assets/logo.png"; 
 import { Link } from "react-router-dom";
 import NotificationBell from "./NotificationBell";
 
 const Navigation = ({ user }) => {
   // Local state for fetched profile, falling back to the passed user prop if available.
   const [profile, setProfile] = useState(user);
-  // New state for unread count (Approach B: fetching directly in Navigation)
+  // New state for unread count 
   const [unreadCount, setUnreadCount] = useState(0);
 
   // Fetch user profile if not already provided
@@ -52,14 +52,14 @@ const Navigation = ({ user }) => {
 
   return (
     <header className="fullpage-navbar">
-      {/* Left Section: Logo wrapped in a Link to Home */}
+      {/*  Logo wrapped in a Link to Home */}
       <div className="navbar-left">
         <Link to="/">
           <img src={logo} alt="Logo" className="navbar-logo" />
         </Link>
       </div>
 
-      {/* Right Section: Nav Buttons + User Pic */}
+      {/*  Nav Buttons + User Pic */}
       <div className="navbar-right">
         <Link to="/start-trip">
           <button>Start a trip</button>

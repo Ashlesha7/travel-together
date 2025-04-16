@@ -2,11 +2,10 @@ require("dotenv").config();
 const express = require("express");
 const bcrypt = require("bcryptjs");
 const jwt = require("jsonwebtoken");
-const Admin = require("../admin/adminModel");  // Adjust path if needed
+const Admin = require("../admin/adminModel");  
 
-// New imports for gathering dashboard metrics:
-const User = require("../userModel");        // Path to your User model
-const TripPlan = require("../tripPlanModel");  // Path to your TripPlan model
+const User = require("../userModel");        
+const TripPlan = require("../tripPlanModel"); 
 const Notification = require("../notificationModel");
 
 const router = express.Router();
@@ -94,7 +93,7 @@ router.get("/admin/dashboard", verifyAdmin, async (req, res) => {
   }
 });
 
-// New Endpoint: Get all users (for admin user management)
+//  Get all users (for admin user management)
 router.get("/admin/users", verifyAdmin, async (req, res) => {
   try {
     // Return only the fields you wish to display (omit sensitive data)
@@ -106,7 +105,7 @@ router.get("/admin/users", verifyAdmin, async (req, res) => {
   }
 });
 
-// New Endpoint: Delete a user by ID
+//  Delete a user by ID
 router.delete("/admin/users/:id", verifyAdmin, async (req, res) => {
   try {
     const { id } = req.params;
@@ -118,9 +117,8 @@ router.delete("/admin/users/:id", verifyAdmin, async (req, res) => {
   }
 });
 
-// --------------------
+
 // New Admin Trip Plans Endpoints
-// --------------------
 
 // Get all trip plans (for admin trip plans management)
 router.get("/admin/trip-plans", verifyAdmin, async (req, res) => {
@@ -162,9 +160,8 @@ router.patch("/admin/trip-plans/:id/complete", verifyAdmin, async (req, res) => 
   }
 });
 
-// --------------------
-// New Endpoint for Admin Notifications
-// --------------------
+
+// Endpoint for Admin Notifications
 // This endpoint allows an admin to view notifications across all users.
 router.get("/admin/notifications", verifyAdmin, async (req, res) => {
   if (!req.admin || req.admin.role !== "admin") {
@@ -184,7 +181,7 @@ router.get("/admin/notifications", verifyAdmin, async (req, res) => {
     // For pagination
     const skip = (page - 1) * limit;
 
-    // Query the DB with optional filter + pagination
+    // Query the DB with  filter + pagination
     const notifications = await Notification.find(filter)
       .populate("senderId", "fullName")
       .populate("receiverId", "fullName")
@@ -192,7 +189,7 @@ router.get("/admin/notifications", verifyAdmin, async (req, res) => {
       .skip(skip)
       .limit(parseInt(limit, 10));
 
-    // Also get total count of matching notifications
+    //  get total count of matching notifications
     const totalCount = await Notification.countDocuments(filter);
 
     return res.status(200).json({
@@ -208,9 +205,9 @@ router.get("/admin/notifications", verifyAdmin, async (req, res) => {
 
 
 
-// --------------------
+
 // Reports Endpoint with Status Distribution
-// --------------------
+
 router.get("/admin/reports", verifyAdmin, async (req, res) => {
   try {
     // Aggregate user registrations per month

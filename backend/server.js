@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const http = require("http"); // Create an HTTP server for Socket.IO
-const socketio = require("socket.io"); // Socket.IO integration
+const socketio = require("socket.io"); 
 const connectDB = require("./db");
 const userRoutes = require("./userRoutes");
 const tripPlanRoutes = require("./tripPlanRoutes");
@@ -11,11 +11,7 @@ const path = require("path");
 const fs = require("fs");
 const morgan = require("morgan");
 const notificationRoutes = require("./notificationRoutes");
-
-// Import conversationRoutes
 const conversationRoutes = require("./conversationRoutes");
-
-// Import Message & Conversation models to persist messages
 const Message = require("./messageModel");
 const Conversation = require("./conversationModel");
 
@@ -107,7 +103,6 @@ app.use((err, req, res, next) => {
   res.status(500).json({ msg: "Something went wrong!", error: err.message });
 });
 
-// -------------------------
 // Socket.IO for Real-Time Messaging
 // -------------------------
 io.on("connection", (socket) => {
@@ -137,7 +132,7 @@ io.on("connection", (socket) => {
       });
       await newMessage.save();
   
-      // Optionally update the conversation's updatedAt field
+      // Update the conversation's updatedAt field
       await Conversation.findByIdAndUpdate(conversationId, { updatedAt: new Date() });
   
       // Re-query the saved message so that Mongoose auto-decrypts the text field
@@ -156,7 +151,7 @@ io.on("connection", (socket) => {
   });
 });
 
-// After connecting to the database in server.js, add this function:
+
 async function seedAdminIfNotExists() {
   try {
     // Get admin credentials from environment variables
@@ -189,15 +184,14 @@ async function seedAdminIfNotExists() {
   }
 }
 
-// After your DB connection is successful, call the function:
+
 connectDB().then(() => {
   seedAdminIfNotExists();
-  // Continue with starting the server, etc.
 }).catch((err) => {
-  console.error("❌ Database connection failed:", err);
+  console.error(" Database connection failed:", err);
   process.exit(1);
 });
 
 // Start Server
 const PORT = process.env.PORT || 8080;
-server.listen(PORT, () => console.log(`🚀 Server running on port ${PORT}`));
+server.listen(PORT, () => console.log(` Server running on port ${PORT}`));

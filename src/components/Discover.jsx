@@ -13,10 +13,10 @@ import { useNavigate } from "react-router-dom"; // for navigation
 
 import Navigation from "./Navigation";
 import Footer from "./Footer";
-import "./Discover.css"; // Keep your existing styles
+import "./Discover.css"; 
 import RoutingMachine from "./RoutingMachine";
 
-// Fix Leaflet's default icon paths so markers display correctly
+// Fix Leaflet's default icon paths 
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: require("leaflet/dist/images/marker-icon-2x.png"),
@@ -166,7 +166,7 @@ const Discover = () => {
     });
   };
 
-  // Modified handleConnect:
+  
   // 1. Checks if an accepted connection already exists.
   // 2. If yes, find or create a conversation, then navigate to /messages/:conversationId.
   // 3. Otherwise, send a new connection request notification.
@@ -269,7 +269,7 @@ const Discover = () => {
       <Navigation user={user} />
 
       <div className="discover-content">
-        {/* Left Column: Trip list */}
+        {/*  Trip list */}
         <div className="trip-list">
           <h2 className="discover-title">Discover Trips</h2>
           <div className="search-bar">
@@ -280,7 +280,7 @@ const Discover = () => {
               onChange={(e) => setSearchQuery(e.target.value)}
             />
           </div>
-          {/* Advanced Filters */}
+          {/* Filters */}
           <div className="advanced-filters">
             <input
               type="date"
@@ -356,7 +356,7 @@ const Discover = () => {
           </div>
         </div>
 
-        {/* Right Column: Map */}
+        {/*  Map */}
         <div className="discover-map">
           <MapContainer
             center={[28.3949, 84.124]}
@@ -403,14 +403,14 @@ const Discover = () => {
 
       <Footer />
 
-      {/* New Modal Code with Two-Column Details Layout */}
+      
       {showModal && selectedTrip && (
         <div className="modal-overlay" onClick={closeModal}>
           <div
             className="modal-content details-layout"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close button with extra spacing */}
+            {/* Close button */}
             <button
               className="close-modal"
               onClick={closeModal}
@@ -427,7 +427,7 @@ const Discover = () => {
 
             {/* Two Columns */}
             <div className="details-columns">
-              {/* Left Column: Trip Details */}
+              {/*  Trip Details */}
               <div className="details-left">
                 <h3>Trip Details</h3>
                 <ul>
@@ -438,7 +438,7 @@ const Discover = () => {
                 <p>Connect with {selectedTrip.user?.fullName} to see this</p>
               </div>
 
-              {/* Right Column: Creator Info */}
+              {/*  Creator Info */}
               <div className="details-right">
                 <h3>Trip Created by {selectedTrip.user?.fullName}</h3>
                 <img

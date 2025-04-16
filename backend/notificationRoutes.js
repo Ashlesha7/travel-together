@@ -139,11 +139,11 @@
 
 const express = require("express");
 const router = express.Router();
-const Notification = require("./notificationModel"); // Import your Notification model
+const Notification = require("./notificationModel");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
 
-// A simple auth middleware (if you already have one, reuse it)
+//  auth middleware 
 function auth(req, res, next) {
   const token = req.header("Authorization");
   if (!token) return res.status(401).json({ msg: "Access Denied" });
@@ -161,7 +161,7 @@ router.post("/notifications/send", auth, async (req, res) => {
   try {
     const { senderId, senderName, receiverId, type, message } = req.body;
 
-    // Basic validation
+    //  validation
     if (!senderId || !receiverId || !type || !message) {
       return res.status(400).json({ msg: "Missing required fields" });
     }
@@ -232,7 +232,7 @@ router.post("/notifications/respond", auth, async (req, res) => {
 
     // Create a response notification to inform the sender about the result.
     const responseNotification = new Notification({
-      senderId: req.user.id, // responder becomes the sender
+      senderId: req.user.id, 
       senderName: req.user.fullName || "Responder",
       receiverId: notification.senderId,
       type: "connectResponse",
@@ -277,18 +277,15 @@ router.get("/notifications/connection-status", auth, async (req, res) => {
   }
 });
 
-// -------------------------------
-// New Endpoints for Persistent Unread Notifications
-// -------------------------------
+
+// Endpoints for Persistent Unread Notifications
 
 // 5) Fetch unread notifications count for the logged-in user
 router.get("/notifications/unread", auth, async (req, res) => {
   try {
     const unreadCount = await Notification.countDocuments({
       receiverId: req.user.id,
-      status: "pending", // assuming pending notifications are unread
-      // Optionally, you can also filter by type if needed:
-      // type: "message"
+      status: "pending", 
     });
     res.status(200).json({ unreadCount });
   } catch (err) {

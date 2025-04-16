@@ -1,4 +1,4 @@
-// notificationModel.js
+
 const mongoose = require("mongoose");
 
 const NotificationSchema = new mongoose.Schema({
@@ -9,7 +9,7 @@ const NotificationSchema = new mongoose.Schema({
   message: { type: String, required: true },
   status: { 
     type: String, 
-    enum: ["pending", "accepted", "rejected", "read"], // Added "read"
+    enum: ["pending", "accepted", "rejected", "read"], 
     default: "pending" 
   },
   createdAt: { type: Date, default: Date.now },
