@@ -31,7 +31,8 @@ const UserSchema = new mongoose.Schema({
     birthYear: { type: String, default: "" },
     gender: { type: String, default: "" },
     resetCode: { type: String, default: "" },
-    resetCodeExpiry: { type: Date }
+    resetCodeExpiry: { type: Date },
+    isAccepted: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('User', UserSchema);

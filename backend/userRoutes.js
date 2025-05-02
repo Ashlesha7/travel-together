@@ -557,6 +557,12 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
+    if (!user.isAccepted) {
+      return res
+        .status(403)
+        .json({ message: "Your account is pending admin approval." });
+    }
+
     const accessToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "24h" });
     const refreshToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
 
@@ -574,7 +580,7 @@ router.post("/login", async (req, res) => {
       },
     });
   } catch (error) {
-    console.error("❌ Login error:", error);
+    console.error(" Login error:", error);
     res.status(500).json({ message: "Server error", error: error.message });
   }
 });
@@ -606,7 +612,7 @@ router.get("/profile", authenticateToken, async (req, res) => {
     if (!user) return res.status(404).json({ msg: "User not found" });
     res.status(200).json(user);
   } catch (error) {
-    console.error("❌ Authentication error:", error);
+    console.error(" Authentication error:", error);
     res.status(401).json({ msg: "Invalid token" });
   }
 });
@@ -617,7 +623,7 @@ router.get("/user-profile", authenticateToken, async (req, res) => {
     if (!user) return res.status(404).json({ msg: "User not found" });
     res.status(200).json(user);
   } catch (error) {
-    console.error("❌ Authentication error:", error);
+    console.error(" Authentication error:", error);
     res.status(401).json({ msg: "Invalid token" });
   }
 });
@@ -629,10 +635,20 @@ router.post(
   upload.fields([{ name: "citizenshipPhoto" }, { name: "profilePhoto" }]),
   async (req, res) => {
     try {
-      console.log("📥 Received signup request:", req.body);
-      console.log("📂 Received files:", req.files);
+      console.log(" Received signup request:", req.body);
+      console.log(" Received files:", req.files);
 
       const { fullName, email, phoneNumber, citizenshipNumber, password } = req.body;
+
+      if (!email.includes('@') || !email.includes('.')) {
+        return res.status(400).json({ msg: "Invalid email format" });
+      }
+      if (citizenshipNumber.length < 16) { 
+        return res.status(400).json({ msg: "Citizenship number too short" });
+      }
+      if (phoneNumber.length < 10) { 
+        return res.status(400).json({ msg: "Invalid phone number" });
+      }
 
       if (!fullName || !email || !phoneNumber || !citizenshipNumber || !password) {
         return res.status(400).json({ msg: "All text fields are required" });
@@ -661,7 +677,7 @@ router.post(
         user: { id: newUser._id.toString(), email: newUser.email },
       });
     } catch (error) {
-      console.error("❌ Signup error:", error);
+      console.error(" Signup error:", error);
       res.status(500).json({ msg: "Server error", error: error.message });
     }
   }

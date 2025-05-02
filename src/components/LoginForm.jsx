@@ -166,19 +166,20 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import { Link } from 'react-router-dom';
-import { GoogleLogin } from '@react-oauth/google'; 
-
+import { GoogleLogin } from '@react-oauth/google';  
 
 function LoginForm({ switchToSignup }) {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setErrorMessage(''); // clear previous errors
 
     if (!email || !password) {
-      alert('Please enter both email and password.');
+      setErrorMessage('Please enter both email and password.');
       return;
     }
 
@@ -200,15 +201,17 @@ function LoginForm({ switchToSignup }) {
       window.location.href = "/dashboard"; 
     } catch (error) {
       console.error("❌ Login failed:", error.response?.data);
-      alert(error.response?.data?.message || 'Login failed. Please try again.');
+      if (error.response?.status === 403) {
+        setErrorMessage("Your account is pending admin approval.");
+      } else {
+        setErrorMessage(error.response?.data?.message || 'Login failed. Please try again.');
+      }
     } finally {
       setLoading(false);
     }
   };
 
-  
   const handleGoogleSuccess = async (credentialResponse) => {
-    
     const googleIdToken = credentialResponse.credential;
     try {
       console.log("Google token received:", googleIdToken);
@@ -226,7 +229,6 @@ function LoginForm({ switchToSignup }) {
     }
   };
 
-  
   const handleGoogleError = () => {
     console.error("Google sign in was unsuccessful.");
     alert("Google sign in was unsuccessful. Please try again.");
@@ -235,6 +237,11 @@ function LoginForm({ switchToSignup }) {
   return (
     <div className="form-container active">
       <h2>Login</h2>
+      {errorMessage && (
+        <p style={{ color: 'red', marginBottom: '1rem', textAlign: 'center' }}>
+          {errorMessage}
+        </p>
+      )}
       <form onSubmit={handleSubmit}>
         <label htmlFor="login-email">Email</label>
         <input
@@ -261,7 +268,7 @@ function LoginForm({ switchToSignup }) {
         </button>
 
         <p className="switch">
-          Don't have an account?{" "}
+          Don't have an account?{' '}
           <button type="button" onClick={switchToSignup} className="link-button">
             Sign up
           </button>

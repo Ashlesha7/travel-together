@@ -117,6 +117,32 @@ router.delete("/admin/users/:id", verifyAdmin, async (req, res) => {
   }
 });
 
+// Accept a user (admin must approve before they can log in)
+router.patch(
+  "/admin/users/:id/accept",
+  verifyAdmin,
+  async (req, res) => {
+    try {
+      const user = await User.findByIdAndUpdate(
+        req.params.id,
+        { isAccepted: true },
+        { new: true }
+      );
+      if (!user) {
+        return res.status(404).json({ msg: "User not found" });
+      }
+      return res
+        .status(200)
+        .json({ msg: "User accepted successfully", user });
+    } catch (error) {
+      console.error("Accept user error:", error);
+      return res
+        .status(500)
+        .json({ msg: "Server error", error: error.message });
+    }
+  }
+);
+
 
 // New Admin Trip Plans Endpoints
 

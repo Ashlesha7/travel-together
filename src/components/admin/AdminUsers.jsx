@@ -1,4 +1,3 @@
-
 import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
@@ -17,11 +16,22 @@ function AdminUsers() {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem('adminToken');
-        // Ensure you're hitting your Node server (port 8080)
         const res = await axios.get('http://localhost:8080/api/admin/users', {
           headers: { Authorization: `Bearer ${token}` },
         });
-        setUsers(res.data);
+
+        // read which IDs we've accepted previously
+        const storedAccepted = JSON.parse(localStorage.getItem('acceptedIds') || '[]');
+
+        // sort and annotate each user with isAccepted boolean
+        const sortedUsers = res.data
+          .sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt))
+          .map(u => ({
+            ...u,
+            isAccepted: storedAccepted.includes(u._id),
+          }));
+
+        setUsers(sortedUsers);
       } catch (err) {
         console.error('Error fetching users:', err);
         setError('Failed to fetch users.');
@@ -44,17 +54,50 @@ function AdminUsers() {
     }
   };
 
-  //  open modal with selected user details
   const handleViewDetails = (user) => {
     setSelectedUser(user);
     setShowModal(true);
   };
 
-  // close modal
   const closeModal = () => {
     setShowModal(false);
     setSelectedUser(null);
   };
+
+  // --- NEW: Accept handler with localStorage persistence & one‑click disable ---
+  const handleAccept = async () => {
+    if (!selectedUser || selectedUser.isAccepted) return;
+
+    // 1) update UI immediately
+    setSelectedUser(prev => ({ ...prev, isAccepted: true }));
+    setUsers(prev =>
+      prev.map(u =>
+        u._id === selectedUser._id ? { ...u, isAccepted: true } : u
+      )
+    );
+
+    // 2) remember in localStorage so a refresh keeps it disabled
+    const acceptedIds = JSON.parse(localStorage.getItem('acceptedIds') || '[]');
+    localStorage.setItem(
+      'acceptedIds',
+      JSON.stringify([...acceptedIds, selectedUser._id])
+    );
+
+    // 3) fire your PATCH
+    try {
+      const token = localStorage.getItem('adminToken');
+      await axios.patch(
+        `http://localhost:8080/api/admin/users/${selectedUser._id}/accept`,
+        {},
+        { headers: { Authorization: `Bearer ${token}` } }
+      );
+      // we do NOT override our isAccepted flag here
+    } catch (err) {
+      console.error('Error accepting user:', err);
+      // optionally roll back UI/localStorage on failure
+    }
+  };
+  // --------------------------------------------------------------------------
 
   // Hover styling for sidebar
   const handleMouseEnter = (index) => setHoveredItem(index);
@@ -65,7 +108,7 @@ function AdminUsers() {
       : {};
   };
 
-  // Layout styles
+  // Layout styles (unchanged)
   const containerStyle = {
     display: 'flex',
     width: '100vw',
@@ -76,7 +119,6 @@ function AdminUsers() {
     boxSizing: 'border-box',
     overflow: 'hidden',
   };
-
   const sidebarStyle = {
     width: '240px',
     height: '100%',
@@ -87,13 +129,11 @@ function AdminUsers() {
     display: 'flex',
     flexDirection: 'column',
   };
-
   const sidebarHeaderStyle = {
     fontSize: '1.5rem',
     fontWeight: 'bold',
     marginBottom: '1.5rem',
   };
-
   const sidebarItemStyle = {
     marginBottom: '1rem',
     cursor: 'pointer',
@@ -101,7 +141,6 @@ function AdminUsers() {
     borderRadius: '4px',
     transition: 'background-color 0.3s',
   };
-
   const mainContentStyle = {
     flex: 1,
     height: '100%',
@@ -110,7 +149,6 @@ function AdminUsers() {
     padding: '20px',
     boxSizing: 'border-box',
   };
-
   const headingStyle = {
     marginBottom: '1.5rem',
     color: '#2c3e50',
@@ -119,7 +157,6 @@ function AdminUsers() {
     textTransform: 'uppercase',
     letterSpacing: '1px',
   };
-
   const tableStyle = {
     width: '100%',
     borderCollapse: 'collapse',
@@ -129,22 +166,9 @@ function AdminUsers() {
     overflow: 'hidden',
     boxShadow: '0 2px 6px rgba(0,0,0,0.1)',
   };
-
-  const theadStyle = {
-    backgroundColor: '#2c3e50',
-    color: '#ecf0f1',
-  };
-
-  const thStyle = {
-    padding: '12px 10px',
-    textAlign: 'left',
-  };
-
-  const tdStyle = {
-    borderBottom: '1px solid #ddd',
-    padding: '12px 10px',
-  };
-
+  const theadStyle = { backgroundColor: '#2c3e50', color: '#ecf0f1' };
+  const thStyle = { padding: '12px 10px', textAlign: 'left' };
+  const tdStyle = { padding: '12px 10px', borderBottom: '1px solid #ddd' };
   const actionButtonStyle = {
     backgroundColor: '#3498db',
     color: '#fff',
@@ -154,7 +178,6 @@ function AdminUsers() {
     cursor: 'pointer',
     marginRight: '8px',
   };
-
   const deleteButtonStyle = {
     backgroundColor: '#e74c3c',
     color: '#fff',
@@ -163,7 +186,6 @@ function AdminUsers() {
     padding: '6px 12px',
     cursor: 'pointer',
   };
-
   const backButtonStyle = {
     marginTop: '20px',
     padding: '10px 20px',
@@ -176,13 +198,30 @@ function AdminUsers() {
     marginLeft: 'auto',
     marginRight: 'auto',
   };
+  const closeBtnStyle = {
+    flex: 1,
+    padding: '10px 20px',
+    backgroundColor: '#3498db',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  };
+  const acceptBtnStyle = {
+    flex: 1,
+    padding: '10px 20px',
+    backgroundColor: '#2ecc71',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  };
 
   return (
     <div style={containerStyle}>
       {/* Sidebar Navigation */}
       <div style={sidebarStyle}>
         <div style={sidebarHeaderStyle}>Admin Panel</div>
-
         <div
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(0) }}
           onMouseEnter={() => handleMouseEnter(0)}
@@ -191,13 +230,11 @@ function AdminUsers() {
         >
           Dashboard
         </div>
-
-        {/* Highlight “Users” */}
         <div
-          style={{ 
-            ...sidebarItemStyle, 
-            ...getSidebarItemDynamicStyle(1), 
-            backgroundColor: 'rgba(255, 255, 255, 0.1)' 
+          style={{
+            ...sidebarItemStyle,
+            ...getSidebarItemDynamicStyle(1),
+            backgroundColor: 'rgba(255, 255, 255, 0.1)',
           }}
           onMouseEnter={() => handleMouseEnter(1)}
           onMouseLeave={handleMouseLeave}
@@ -205,24 +242,22 @@ function AdminUsers() {
         >
           Users
         </div>
-
         <div
-        style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(5) }}
-        onMouseEnter={() => handleMouseEnter(5)}
-        onMouseLeave={handleMouseLeave}
-        onClick={() => navigate('/admin/trip-plans')}
+          style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(5) }}
+          onMouseEnter={() => handleMouseEnter(5)}
+          onMouseLeave={handleMouseLeave}
+          onClick={() => navigate('/admin/trip-plans')}
         >
           Trip Plans
-          </div>
+        </div>
         <div
-        style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(6) }}
-        onMouseEnter={() => handleMouseEnter(6)}
-        onMouseLeave={handleMouseLeave}
-        onClick={() => navigate("/admin/notifications")}
+          style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(6) }}
+          onMouseEnter={() => handleMouseEnter(6)}
+          onMouseLeave={handleMouseLeave}
+          onClick={() => navigate('/admin/notifications')}
         >
           Notifications
-          </div>
-
+        </div>
         <div
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(2) }}
           onMouseEnter={() => handleMouseEnter(2)}
@@ -231,7 +266,6 @@ function AdminUsers() {
         >
           Reports
         </div>
-
         <div
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(3) }}
           onMouseEnter={() => handleMouseEnter(3)}
@@ -239,7 +273,6 @@ function AdminUsers() {
         >
           Settings
         </div>
-
         <div
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(4) }}
           onMouseEnter={() => handleMouseEnter(4)}
@@ -257,7 +290,6 @@ function AdminUsers() {
       <div style={mainContentStyle}>
         <h2 style={headingStyle}>User Management</h2>
         {error && <p style={{ color: 'red', textAlign: 'center' }}>{error}</p>}
-
         <table style={tableStyle}>
           <thead style={theadStyle}>
             <tr>
@@ -296,41 +328,53 @@ function AdminUsers() {
 
       {/* Modal for Extended User Details */}
       {showModal && selectedUser && (
-        <div style={{
-          position: 'fixed',
-          top: 0,
-          left: 0,
-          width: '100vw',
-          height: '100vh',
-          backgroundColor: 'rgba(0, 0, 0, 0.5)',
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-          zIndex: 1000,
-        }}>
-          <div style={{
-            backgroundColor: '#fff',
-            padding: '2rem',
-            borderRadius: '8px',
-            width: '90%',
-            maxWidth: '600px',
-            boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
-            position: 'relative'
-          }}>
+        <div
+          style={{
+            position: 'fixed',
+            top: 0,
+            left: 0,
+            width: '100vw',
+            height: '100vh',
+            backgroundColor: 'rgba(0, 0, 0, 0.5)',
+            display: 'flex',
+            justifyContent: 'center',
+            alignItems: 'center',
+            zIndex: 1000,
+          }}
+        >
+          <div
+            style={{
+              backgroundColor: '#fff',
+              padding: '2rem',
+              borderRadius: '8px',
+              width: '90%',
+              maxWidth: '600px',
+              boxShadow: '0 4px 12px rgba(0, 0, 0, 0.2)',
+              position: 'relative',
+            }}
+          >
             <h2 style={{ textAlign: 'center', marginBottom: '1rem', color: '#2c3e50' }}>
               User Details
             </h2>
-            <p><strong>Full Name:</strong> {selectedUser.fullName}</p>
-            <p><strong>Email:</strong> {selectedUser.email}</p>
-            <p><strong>Phone:</strong> {selectedUser.phoneNumber}</p>
-            <p><strong>Citizenship Number:</strong> {selectedUser.citizenshipNumber || 'N/A'}</p>
+            <p>
+              <strong>Full Name:</strong> {selectedUser.fullName}
+            </p>
+            <p>
+              <strong>Email:</strong> {selectedUser.email}
+            </p>
+            <p>
+              <strong>Phone:</strong> {selectedUser.phoneNumber}
+            </p>
+            <p>
+              <strong>Citizenship Number:</strong> {selectedUser.citizenshipNumber || 'N/A'}
+            </p>
             {selectedUser.citizenshipPhoto && (
               <div>
                 <p><strong>Citizenship Photo:</strong></p>
                 <img
                   src={`http://localhost:8080/${selectedUser.citizenshipPhoto}`}
                   alt="Citizenship"
-                  style={{ width: '100px', height: 'auto', borderRadius: '4px' }}
+                  style={{ width: '100px', borderRadius: '4px', marginBottom: '1rem' }}
                 />
               </div>
             )}
@@ -346,23 +390,24 @@ function AdminUsers() {
             {selectedUser.homeBase && (
               <p><strong>Home Base:</strong> {selectedUser.homeBase}</p>
             )}
-            <button 
-              style={{
-                marginTop: '20px',
-                padding: '10px 20px',
-                backgroundColor: '#3498db',
-                color: '#fff',
-                border: 'none',
-                borderRadius: '4px',
-                cursor: 'pointer',
-                display: 'block',
-                marginLeft: 'auto',
-                marginRight: 'auto'
-              }}
-              onClick={closeModal}
-            >
-              Close
-            </button>
+
+            <div style={{ display: 'flex', gap: '10px', marginTop: '20px' }}>
+              <button style={closeBtnStyle} onClick={closeModal}>
+                Close
+              </button>
+              <button
+                style={{
+                  ...acceptBtnStyle,
+                  ...(selectedUser.isAccepted
+                    ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' }
+                    : {}),
+                }}
+                onClick={handleAccept}
+                disabled={selectedUser.isAccepted}
+              >
+                {selectedUser.isAccepted ? 'Accepted' : 'Accept User'}
+              </button>
+            </div>
           </div>
         </div>
       )}

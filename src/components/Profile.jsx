@@ -1,6 +1,6 @@
 
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Navigation from "./Navigation"; 
 import "./Profile.css";                
@@ -52,25 +52,7 @@ export default function Profile() {
   };
 
   // 3) Fetch user data on mount
-  useEffect(() => {
-    fetchUser();
-  }, []);
-
-  // const fetchUser = async () => {
-  //   try {
-  //     const token = localStorage.getItem("token");
-  //     if (!token) return;
-  //     const response = await axios.get("http://localhost:8080/api/user-profile", {
-  //       headers: { Authorization: token },
-  //     });
-  //     setUser(response.data);
-  //   } catch (error) {
-  //     console.error("Error fetching user:", error);
-  //   }
-  // };
-
-
-  const fetchUser = async () => {
+  const fetchUser = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -79,16 +61,13 @@ export default function Profile() {
         headers: { Authorization: token },
       });
   
-      // If token expired, try to refresh it
       if (response.data.requiresRefresh) {
         const refreshResponse = await axios.post("http://localhost:8080/api/refresh-token", {
           refreshToken: localStorage.getItem("refreshToken")
         });
         
-        // Store the new token
         localStorage.setItem("token", refreshResponse.data.token);
         
-        // Retry the original request with new token
         response = await axios.get("http://localhost:8080/api/user-profile", {
           headers: { Authorization: refreshResponse.data.token },
         });
@@ -97,12 +76,15 @@ export default function Profile() {
       setUser(response.data);
     } catch (error) {
       console.error("Error fetching user:", error);
-      if (error.response && error.response.status === 401) {
-        // Handle logout or redirect to login
+      if (error.response?.status === 401) {
         handleLogout();
       }
     }
-  };
+  }, []);
+
+  useEffect(() => {
+    fetchUser();
+  }, [fetchUser]);
 
 
   // 4) Cover photo upload
@@ -519,7 +501,7 @@ export default function Profile() {
         </div>
       </div>
 
-      {/*  Edit Modals */}
+      {/* Edit Modals */}
 
       {/* About Me Modal */}
       {showAboutEdit && (

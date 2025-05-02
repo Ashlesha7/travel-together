@@ -376,6 +376,7 @@ const StartTrip = () => {
                 onChange={(date) => setStartDate(date)}
                 placeholderText="Select start date"
                 customInput={<CalendarInput />}
+                minDate={new Date()} 
               />
               <span>To</span>
               <ReactDatePicker
@@ -383,6 +384,7 @@ const StartTrip = () => {
                 onChange={(date) => setEndDate(date)}
                 placeholderText="Select end date"
                 customInput={<CalendarInput />}
+                minDate={new Date()} 
               />
             </div>
           </div>
