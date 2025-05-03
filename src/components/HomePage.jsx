@@ -245,7 +245,12 @@ const HomePage = () => {
             {user ? (
               <Link to="/profile">
                 <img
-                  src={`http://localhost:8080/${user.profilePhoto}`}
+                src={
+                  user.profilePhoto.startsWith("http")
+                    ? user.profilePhoto
+                    : `http://localhost:8080/${user.profilePhoto}`
+                }
+                  //src={`http://localhost:8080/${user.profilePhoto}`}
                   alt="Profile"
                   className="profile-pic"
                 />

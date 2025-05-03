@@ -1,11 +1,8 @@
-
-
 import React, { useState, useEffect, useCallback } from "react";
 import axios from "axios";
 import Navigation from "./Navigation"; 
 import "./Profile.css";                
 import Footer from "./Footer";
-//import ThemeToggle from "./ThemeToggle";
 
 export default function Profile() {
   // 1) All state variables for editing fields
@@ -38,12 +35,10 @@ export default function Profile() {
   const [showEmailEdit, setShowEmailEdit] = useState(false);
   const [tempEmail, setTempEmail] = useState("");
 
-  
-  //  State for the Settings modal
+  // Settings modal
   const [showSettings, setShowSettings] = useState(false);
 
-
-  // 2) Format joined date function
+  // Format joined date
   const formatJoinedDate = (dateString) => {
     if (!dateString) return "N/A";
     const date = new Date(dateString);
@@ -51,28 +46,27 @@ export default function Profile() {
     return date.toLocaleDateString(undefined, options);
   };
 
-  // 3) Fetch user data on mount
+  // Fetch user data
   const fetchUser = useCallback(async () => {
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
-  
+
       let response = await axios.get("http://localhost:8080/api/user-profile", {
         headers: { Authorization: token },
       });
-  
+
       if (response.data.requiresRefresh) {
-        const refreshResponse = await axios.post("http://localhost:8080/api/refresh-token", {
-          refreshToken: localStorage.getItem("refreshToken")
-        });
-        
+        const refreshResponse = await axios.post(
+          "http://localhost:8080/api/refresh-token",
+          { refreshToken: localStorage.getItem("refreshToken") }
+        );
         localStorage.setItem("token", refreshResponse.data.token);
-        
         response = await axios.get("http://localhost:8080/api/user-profile", {
           headers: { Authorization: refreshResponse.data.token },
         });
       }
-  
+
       setUser(response.data);
     } catch (error) {
       console.error("Error fetching user:", error);
@@ -86,8 +80,7 @@ export default function Profile() {
     fetchUser();
   }, [fetchUser]);
 
-
-  // 4) Cover photo upload
+  // Cover photo upload
   const handleCoverChange = (e) => {
     if (e.target.files && e.target.files[0]) {
       setCoverFile(e.target.files[0]);
@@ -103,13 +96,12 @@ export default function Profile() {
       const formData = new FormData();
       formData.append("coverPhoto", coverFile);
 
-      await axios.patch("http://localhost:8080/api/user-profile/cover", formData, {
-        headers: {
-          Authorization: token,
-          "Content-Type": "multipart/form-data",
-        },
-      });
-      await fetchUser(); // refresh user data
+      await axios.patch(
+        "http://localhost:8080/api/user-profile/cover",
+        formData,
+        { headers: { Authorization: token } }
+      );
+      await fetchUser();
       setCoverFile(null);
       alert("Cover photo updated!");
     } catch (error) {
@@ -117,22 +109,18 @@ export default function Profile() {
     }
   };
 
-
-  //  Logout handler
+  // Logout
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
     setUser(null);
-    // Redirect to homepage (logged-out state)
     window.location.href = "/";
   };
 
-  
-  //  Theme toggle placeholder
+  // Theme toggle placeholder
   const handleThemeToggle = () => {
     alert("Dark/Light mode");
   };
-
 
   // 5) About Me
   const handleAboutEdit = () => {
@@ -147,19 +135,19 @@ export default function Profile() {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const updatedFields = {
-        homeBase: tempHomeBase,
-        birthYear: tempBirthYear,
-        gender: tempGender,
-      };
+      const form = new FormData();
+      form.append("homeBase", tempHomeBase);
+      form.append("birthYear", tempBirthYear);
+      form.append("gender", tempGender);
 
-      const res=await axios.put("http://localhost:8080/api/user-profile", updatedFields, {
-        headers: { Authorization: token },
-      });
+      const res = await axios.put(
+        "http://localhost:8080/api/user-profile",
+        form,
+        { headers: { Authorization: token } }
+      );
 
-      // Update localStorage with the new, complete user object returned from the API
+      // Persist updated user in localStorage
       localStorage.setItem("user", JSON.stringify(res.data.user));
-
       await fetchUser();
       setShowAboutEdit(false);
     } catch (error) {
@@ -167,7 +155,6 @@ export default function Profile() {
     }
   };
 
- 
   // 6) My Bio
   const handleBioEdit = () => {
     setTempBio(user?.bio || "");
@@ -179,9 +166,10 @@ export default function Profile() {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const updatedFields = { bio: tempBio };
+      const form = new FormData();
+      form.append("bio", tempBio);
 
-      await axios.put("http://localhost:8080/api/user-profile", updatedFields, {
+      await axios.put("http://localhost:8080/api/user-profile", form, {
         headers: { Authorization: token },
       });
       await fetchUser();
@@ -190,7 +178,6 @@ export default function Profile() {
       console.error("Error saving Bio:", error);
     }
   };
-
 
   // 7) Citizenship Number
   const handleCNumberEdit = () => {
@@ -203,8 +190,10 @@ export default function Profile() {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const updatedFields = { citizenshipNumber: tempCitizenshipNumber };
-      await axios.put("http://localhost:8080/api/user-profile", updatedFields, {
+      const form = new FormData();
+      form.append("citizenshipNumber", tempCitizenshipNumber);
+
+      await axios.put("http://localhost:8080/api/user-profile", form, {
         headers: { Authorization: token },
       });
       await fetchUser();
@@ -213,7 +202,6 @@ export default function Profile() {
       console.error("Error saving Citizenship Number:", error);
     }
   };
-
 
   // 8) Citizenship Photo
   const handleCPhotoEdit = () => {
@@ -236,19 +224,17 @@ export default function Profile() {
       const formData = new FormData();
       formData.append("citizenshipPhoto", tempCPhotoFile);
 
-      await axios.put("http://localhost:8080/api/user-profile", formData, {
-        headers: {
-          Authorization: token,
-          "Content-Type": "multipart/form-data",
-        },
-      });
+      await axios.put(
+        "http://localhost:8080/api/user-profile",
+        formData,
+        { headers: { Authorization: token } }
+      );
       await fetchUser();
       setShowCPhotoEdit(false);
     } catch (error) {
       console.error("Error saving Citizenship Photo:", error);
     }
   };
-
 
   // 9) Phone Number
   const handlePhoneEdit = () => {
@@ -261,8 +247,10 @@ export default function Profile() {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const updatedFields = { phoneNumber: tempPhone };
-      await axios.put("http://localhost:8080/api/user-profile", updatedFields, {
+      const form = new FormData();
+      form.append("phoneNumber", tempPhone);
+
+      await axios.put("http://localhost:8080/api/user-profile", form, {
         headers: { Authorization: token },
       });
       await fetchUser();
@@ -283,8 +271,10 @@ export default function Profile() {
       const token = localStorage.getItem("token");
       if (!token) return;
 
-      const updatedFields = { email: tempEmail };
-      await axios.put("http://localhost:8080/api/user-profile", updatedFields, {
+      const form = new FormData();
+      form.append("email", tempEmail);
+
+      await axios.put("http://localhost:8080/api/user-profile", form, {
         headers: { Authorization: token },
       });
       await fetchUser();
@@ -294,13 +284,12 @@ export default function Profile() {
     }
   };
 
-
   // 11) Rendering the Profile component
   return (
     <div className="profile-page">
       <Navigation user={user} />
 
-      {/* width cover area */}
+      {/* fullwidth cover */}
       <section className="fullwidth-cover">
         {user?.coverPhoto ? (
           <img
@@ -312,7 +301,6 @@ export default function Profile() {
           <div className="cover-placeholder">No Cover Photo</div>
         )}
 
-        {/* Cover upload controls */}
         <div className="cover-upload-controls">
           <label htmlFor="coverFile" className="cover-upload-label">
             Choose Cover
@@ -330,7 +318,7 @@ export default function Profile() {
         </div>
       </section>
 
-      {/* Settings Button */}
+      {/* Settings */}
       <div className="settings-container">
         <button
           className="settings-button"
@@ -339,61 +327,66 @@ export default function Profile() {
           Settings
         </button>
       </div>
-
-      {/* Settings Modal */}
       {showSettings && (
         <div className="settings-modal">
           <div className="settings-modal-content">
             <h2>Settings</h2>
-
-            {/* Settings List Container */}
             <div className="settings-list">
-              {/* Theme Option */}
               <div className="settings-item">
                 <span>Theme</span>
-                <button onClick={handleThemeToggle}>
-                  Toggle Theme
-                  </button>
+                <button onClick={handleThemeToggle}>Toggle Theme</button>
               </div>
-
-              {/* Logout Option */}
               <div className="settings-item">
                 <span>Logout</span>
                 <button onClick={handleLogout}>Logout</button>
               </div>
             </div>
-
-            {/* Close Button */}
-            <button className="close-modal-btn" onClick={() => setShowSettings(false)}>
+            <button
+              className="close-modal-btn"
+              onClick={() => setShowSettings(false)}
+            >
               Close
             </button>
           </div>
         </div>
       )}
 
-      {/* Incomplete Profile Banner */}
-      {user && (!user.phoneNumber || !user.citizenshipNumber || !user.citizenshipPhoto) && (
-        <div className="incomplete-profile-banner">
-          Your profile is incomplete. Please update your phone number, citizenship number, and upload your citizenship photo to gain full access to all features.
-        </div>
-      )}
+      {/* Incomplete banner */}
+      {user &&
+        (!user.phoneNumber ||
+          !user.citizenshipNumber ||
+          !user.citizenshipPhoto) && (
+          <div className="incomplete-profile-banner">
+            Your profile is incomplete. Please update your phone number,
+            citizenship number, and upload your citizenship photo to gain full
+            access to all features.
+          </div>
+        )}
 
-      {/* Main Profile Content */}
+      {/* Main Content */}
       <div className="profile-main">
         <div className="profile-header">
           <div className="profile-picture-wrapper">
             {user?.profilePhoto ? (
               <img
-                src={`http://localhost:8080/${user.profilePhoto}`}
+                src={
+                  user.profilePhoto.startsWith("http")
+                    ? user.profilePhoto
+                    : `http://localhost:8080/${user.profilePhoto}`
+                }
                 alt="User Profile"
                 className="profile-picture-circle"
               />
             ) : (
-              <div className="profile-picture-placeholder">No Profile Photo</div>
+              <div className="profile-picture-placeholder">
+                No Profile Photo
+              </div>
             )}
             <span className="profile-label">Profile</span>
           </div>
-          <h1 className="profile-username">{user?.fullName || "User Name"}</h1>
+          <h1 className="profile-username">
+            {user?.fullName || "User Name"}
+          </h1>
         </div>
 
         <div className="info-container">
@@ -402,14 +395,18 @@ export default function Profile() {
             <div className="section-header">
               <h2>About Me</h2>
               <button className="edit-btn" onClick={handleAboutEdit}>
-                {user?.homeBase || user?.birthYear || user?.gender ? "Edit" : "Add"}
+                {user?.homeBase || user?.birthYear || user?.gender
+                  ? "Edit"
+                  : "Add"}
               </button>
             </div>
             <div className="section-content">
               <p>Home base: {user?.homeBase || "Not specified"}</p>
               <p>
                 Joined in:{" "}
-                {user?.createdAt ? formatJoinedDate(user.createdAt) : "N/A"}
+                {user?.createdAt
+                  ? formatJoinedDate(user.createdAt)
+                  : "N/A"}
               </p>
               <p>Birth Year: {user?.birthYear || "Not specified"}</p>
               <p>Gender: {user?.gender || "Not specified"}</p>
@@ -502,8 +499,6 @@ export default function Profile() {
       </div>
 
       {/* Edit Modals */}
-
-      {/* About Me Modal */}
       {showAboutEdit && (
         <div className="edit-modal">
           <div className="modal-content">
@@ -538,7 +533,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* My Bio Modal */}
       {showBioEdit && (
         <div className="edit-modal">
           <div className="modal-content">
@@ -556,7 +550,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Citizenship Number Modal */}
       {showCNumberEdit && (
         <div className="edit-modal">
           <div className="modal-content">
@@ -574,7 +567,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Citizenship Photo Modal */}
       {showCPhotoEdit && (
         <div className="edit-modal">
           <div className="modal-content">
@@ -592,7 +584,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Phone Number Modal */}
       {showPhoneEdit && (
         <div className="edit-modal">
           <div className="modal-content">
@@ -610,7 +601,6 @@ export default function Profile() {
         </div>
       )}
 
-      {/* Email Modal */}
       {showEmailEdit && (
         <div className="edit-modal">
           <div className="modal-content">
@@ -627,6 +617,7 @@ export default function Profile() {
           </div>
         </div>
       )}
+
       <Footer />
     </div>
   );

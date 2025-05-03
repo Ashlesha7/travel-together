@@ -424,9 +424,18 @@ const { OAuth2Client } = require("google-auth-library");
 const User = require("./userModel");
 const path = require("path");
 const fs = require("fs");
+const axios = require("axios");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
+
+
+const googleClient = new OAuth2Client(process.env.GOOGLE_CLIENT_ID);
+if (!process.env.GOOGLE_CLIENT_ID) {
+  console.warn(" GOOGLE_CLIENT_ID is not defined in your .env");
+}
+
+
 
 // Ensure the uploads directory exists
 const uploadDir = path.join(__dirname, "uploads");
@@ -457,7 +466,9 @@ const upload = multer({
   storage,
   fileFilter,
   limits: { fileSize: 5 * 1024 * 1024 },
+  
 });
+
 
 // Setup Nodemailer transporter
 const transporter = nodemailer.createTransport({
@@ -520,8 +531,20 @@ router.post("/google-signin", async (req, res) => {
         citizenshipPhoto: "",
         profilePhoto: picture,
       });
-      await user.save();
+    } else {
+      // returning Google user → update their avatar
+      user.profilePhoto = picture;
     }
+    // 1) shrink it a bit by requesting s128
+       const picUrl = picture.replace(/=s\d+-c$/, "=s128-c");
+       // 2) fetch the binary data
+          const imgResp = await axios.get(picUrl, { responseType: "arraybuffer" });
+          // 3) build a filename and write it
+             const filename = `google-${user._id}.jpg`;
+             fs.writeFileSync(path.join(uploadDir, filename), imgResp.data);
+             // 4) point the user record at our local copy
+                user.profilePhoto = `uploads/${filename}`;
+      await user.save();
 
     const accessToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "24h" });
     const refreshToken = jwt.sign({ id: user._id }, JWT_SECRET, { expiresIn: "7d" });
@@ -741,26 +764,66 @@ router.post("/reset-password", async (req, res) => {
 });
 
 // Update User Profile
-router.put("/user-profile", authenticateToken, upload.single("coverPhoto"), async (req, res) => {
-  try {
-    let updatedFields = {
-      bio: req.body.bio,
-      homeBase: req.body.homeBase,
-      birthYear: req.body.birthYear,
-      gender: req.body.gender,
-    };
+// router.put("/user-profile", authenticateToken, upload.single("coverPhoto"), async (req, res) => {
+//   try {
+//     let updatedFields = {
+//       bio: req.body.bio,
+//       homeBase: req.body.homeBase,
+//       birthYear: req.body.birthYear,
+//       gender: req.body.gender,
+//     };
 
-    if (req.file) {
-      updatedFields.coverPhoto = "uploads/" + req.file.filename;
+//     if (req.file) {
+//       updatedFields.coverPhoto = "uploads/" + req.file.filename;
+//     }
+
+//     const user = await User.findByIdAndUpdate(req.user.id, updatedFields, { new: true });
+//     res.status(200).json({ msg: "Profile updated successfully!", user });
+//   } catch (error) {
+//     console.error(" Profile update error:", error);
+//     res.status(500).json({ msg: "Server error", error: error.message });
+//   }
+// });
+
+// userRoutes.js
+
+// change the middleware on this route to handle both file fields:
+router.put(
+  "/user-profile",
+  authenticateToken,
+  upload.fields([
+    { name: "coverPhoto", maxCount: 1 },
+    { name: "citizenshipPhoto", maxCount: 1 },
+  ]),
+  async (req, res) => {
+    try {
+      // 1) build an update object from only the defined body keys
+      const up = {};
+      ["bio","homeBase","birthYear","gender","phoneNumber","citizenshipNumber"]
+        .forEach(key => {
+          if (typeof req.body[key] !== "undefined") {
+            up[key] = req.body[key];
+          }
+        });
+
+      // 2) attach any uploaded files
+      if (req.files.coverPhoto) {
+        up.coverPhoto = "uploads/" + req.files.coverPhoto[0].filename;
+      }
+      if (req.files.citizenshipPhoto) {
+        up.citizenshipPhoto = "uploads/" + req.files.citizenshipPhoto[0].filename;
+      }
+
+      // 3) perform the update
+      const user = await User.findByIdAndUpdate(req.user.id, up, { new: true });
+      return res.json({ msg: "Profile updated!", user });
+    } catch (err) {
+      console.error("Profile update error:", err);
+      return res.status(500).json({ msg: "Server error", error: err.message });
     }
-
-    const user = await User.findByIdAndUpdate(req.user.id, updatedFields, { new: true });
-    res.status(200).json({ msg: "Profile updated successfully!", user });
-  } catch (error) {
-    console.error("❌ Profile update error:", error);
-    res.status(500).json({ msg: "Server error", error: error.message });
   }
-});
+);
+
 
 // Update Cover Photo
 router.patch("/user-profile/cover", authenticateToken, upload.single("coverPhoto"), async (req, res) => {
@@ -774,7 +837,7 @@ router.patch("/user-profile/cover", authenticateToken, upload.single("coverPhoto
     if (!user) return res.status(404).json({ msg: "User not found" });
     return res.status(200).json({ msg: "Cover photo updated successfully!", user });
   } catch (error) {
-    console.error("❌ Cover photo update error:", error);
+    console.error(" Cover photo update error:", error);
     return res.status(500).json({ msg: "Server error", error: error.message });
   }
 });

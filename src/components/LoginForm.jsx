@@ -192,6 +192,7 @@ function LoginForm({ switchToSignup }) {
 
       // Store JWT token in localStorage
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
       // Also store the user object (with id) in localStorage for later use
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
@@ -219,6 +220,7 @@ function LoginForm({ switchToSignup }) {
       console.log("✅ Google sign-in successful:", response.data);
 
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('refreshToken', response.data.refreshToken);
       localStorage.setItem('user', JSON.stringify(response.data.user));
 
       alert(response.data.message);

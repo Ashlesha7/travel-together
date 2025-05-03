@@ -32,6 +32,7 @@ const UserSchema = new mongoose.Schema({
     gender: { type: String, default: "" },
     resetCode: { type: String, default: "" },
     resetCodeExpiry: { type: Date },
+    //profileComplete: { type: Boolean, default: false },
     isAccepted: { type: Boolean, default: false }
 });
 

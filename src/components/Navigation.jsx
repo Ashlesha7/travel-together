@@ -83,8 +83,12 @@ const Navigation = ({ user }) => {
           <img
             src={
               displayUser && displayUser.profilePhoto
-                ? `http://localhost:8080/${displayUser.profilePhoto}`
-                : "/path/to/defaultUser.png"
+              ? displayUser.profilePhoto.startsWith("http")
+              ? displayUser.profilePhoto
+              : `http://localhost:8080/${displayUser.profilePhoto}`
+              : "/assets/defaultUser.png"
+                // ? `http://localhost:8080/${displayUser.profilePhoto}`
+                // : "/path/to/defaultUser.png"
             }
             alt="User"
             className="navbar-user"
