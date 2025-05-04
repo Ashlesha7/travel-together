@@ -241,14 +241,17 @@
 }
 
 .close-modal {
-  position: absolute;
-  top: 0.5rem;
-  right: 0.5rem;
-  background: none;
-  border: none;
-  font-size: 1.5rem;
+  position: relative;   /* now relative to .modal-content */
+  background: #fff;
+  border: 1px solid #ccc;
+  border-radius: 4px;
+  width: 1.8rem;
+  height: 1.8rem;
+  line-height: 1.6rem;
+  text-align: center;
+  font-size: 1.2rem;
   cursor: pointer;
-  color: #2C3C30;
+  padding: 0;
 }
 
 .modal-content h2 {
@@ -324,6 +327,7 @@
 
 /* The container for our new details layout */
 .details-layout {
+  position: relative;
   max-width: 600px;
   position: relative;
   background: #fff;
@@ -390,7 +394,9 @@
 
 /* Connect button area */
 .details-connect {
-  text-align: center;
+  display: flex;
+  justify-content: center;  
+  gap: 1rem; 
   margin-top: 1rem;
 }
 
@@ -413,11 +419,28 @@
 /* Close (X) button in top-right corner */
 .close-modal {
   position: absolute;
-  top: 0.75rem;  /* or 1rem */
-  right: 1rem;   /* or more if needed */
+  top: 0.5rem;  /* or 1rem */
+  right: 0.5rem;   /* or more if needed */
   background: none;
   border: none;
   font-size: 1.5rem;
   cursor: pointer;
   color: #2C3C30;
+  z-index: 10;
 }
+
+.view-profile-button {
+  background-color: #bfb4a0;
+  color: #2C3C30;
+  border: 1px solid #bfb4a0;
+  border-radius: 6px;
+  padding: 0.6rem 1.2rem;
+  font-size: 1rem;
+  cursor: pointer;
+  transition: background-color 0.2s;
+}
+.view-profile-button:hover {
+  background-color: #2C3C30;
+  color: #fff;
+}
+

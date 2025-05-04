@@ -307,7 +307,7 @@ function App() {
           <Route path="/forgot-password" element={<ForgotPassword />} />
 
           {/* Profile Route */}
-          <Route path="/profile" element={<Profile />} />
+          <Route path="/profile/:id?" element={<Profile />} />
 
           {/* Protected Routes using the HOC */}
           <Route path="/start-trip" element={<ProtectedStartTrip />} />

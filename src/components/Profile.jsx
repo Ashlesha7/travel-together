@@ -3,9 +3,15 @@ import axios from "axios";
 import Navigation from "./Navigation"; 
 import "./Profile.css";                
 import Footer from "./Footer";
+import { useParams } from "react-router-dom";
+import ProfilePublic from "./ProfilePublic";
 
 export default function Profile() {
   // 1) All state variables for editing fields
+  const { id } = useParams(); 
+  const storedUser = JSON.parse(localStorage.getItem("user") || "{}");
+  const currentUserId = storedUser._id;
+  const isOwner = !id || id === currentUserId;
   const [user, setUser] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
 
@@ -288,7 +294,8 @@ export default function Profile() {
   return (
     <div className="profile-page">
       <Navigation user={user} />
-
+      {isOwner ? (
+        <>
       {/* fullwidth cover */}
       <section className="fullwidth-cover">
         {user?.coverPhoto ? (
@@ -617,8 +624,11 @@ export default function Profile() {
           </div>
         </div>
       )}
-
+      </>
+      ) : (
+        <ProfilePublic userId={id} />
+      )}
       <Footer />
-    </div>
+    </div> 
   );
 }

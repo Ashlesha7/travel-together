@@ -139,6 +139,7 @@
 
 const express = require("express");
 const router = express.Router();
+const mongoose = require("mongoose");
 const Notification = require("./notificationModel");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
@@ -304,13 +305,14 @@ router.post("/notifications/mark-read", auth, async (req, res) => {
     
     // Explicitly cast the notificationIds and the receiver's id to ObjectId
     const castNotificationIds = notificationIds.map(id => mongoose.Types.ObjectId(id));
-    const receiverObjectId = mongoose.Types.ObjectId(req.user.id);
+    //const receiverObjectId = mongoose.Types.ObjectId(req.user.id);
 
     // Update notifications that match
     const result = await Notification.updateMany(
       { 
         _id: { $in: castNotificationIds },
-        receiverId: receiverObjectId 
+        //receiverId: receiverObjectId 
+        receiverId: req.user.id 
       },
       { status: "read" }
     );

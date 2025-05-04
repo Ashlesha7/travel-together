@@ -208,7 +208,15 @@ const HomePage = () => {
                     ) : (
                       homepageNotifications.map((notif) => (
                         <div key={notif._id} className="notification-item">
-                          <p>{notif.message}</p>
+                          <p>
+                          <Link
+                          to={`/profile/${notif.senderId}`}
+                          className="notif-sender"
+                          >
+                           {notif.senderName}
+                          </Link>{" "}
+                          wants to connect with you
+                          </p> 
                           {notif.type === "connectRequest" &&
                             notif.status === "pending" && (
                               <div className="notification-actions">

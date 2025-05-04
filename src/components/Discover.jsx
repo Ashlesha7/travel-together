@@ -410,20 +410,21 @@ const Discover = () => {
             className="modal-content details-layout"
             onClick={(e) => e.stopPropagation()}
           >
-            {/* Close button */}
-            <button
+            {/* Close button and trip tiles */}
+            <div className="details-header">
+              <h2 className="details-destination">{selectedTrip.destination}</h2>
+              <button
               className="close-modal"
               onClick={closeModal}
-              style={{ top: "1rem", right: "1rem" }}
-            >
-              &times;
-            </button>
+              aria-label="Close details"
+              >
+                &times;
+              </button>
+              </div>
+              <p className="details-dates">
+                {formatDate(selectedTrip.startDate)} – {formatDate(selectedTrip.endDate)}
+              </p>
 
-            {/* Title & Dates */}
-            <h2 className="details-destination">{selectedTrip.destination}</h2>
-            <p className="details-dates">
-              {formatDate(selectedTrip.startDate)} – {formatDate(selectedTrip.endDate)}
-            </p>
 
             {/* Two Columns */}
             <div className="details-columns">
@@ -434,8 +435,8 @@ const Discover = () => {
                   <li>Destination: {selectedTrip.destination}</li>
                   <li>Meetup Location: {selectedTrip.meetupLocation || "N/A"}</li>
                 </ul>
-                <h4>Meetup Point</h4>
-                <p>Connect with {selectedTrip.user?.fullName} to see this</p>
+                {/* <h4>Meetup Point</h4> */}
+                {/* <p>Connect with {selectedTrip.user?.fullName} to see this</p> */}
               </div>
 
               {/*  Creator Info */}
@@ -460,7 +461,7 @@ const Discover = () => {
               <p>{selectedTrip.shortDescription}</p>
             </div>
 
-            {/* Connect Button */}
+            {/* Connect Button + View Profile Buttons */}
             <div className="details-connect">
               <button
                 className="connect-button"
@@ -469,6 +470,14 @@ const Discover = () => {
                 }}
               >
                 Connect
+              </button>
+              <button
+                className="view-profile-button"
+                onClick={() => {
+                  navigate(`/profile/${selectedTrip.user._id}`);
+                }}
+              >
+                View Profile
               </button>
             </div>
           </div>

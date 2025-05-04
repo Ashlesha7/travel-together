@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from "react";
 import axios from "axios";
 import { useNavigate } from "react-router-dom"; 
+import { Link } from "react-router-dom";
 import "./NotificationBell.css"; 
 
 const NotificationBell = ({ user }) => {
@@ -223,25 +224,21 @@ const NotificationBell = ({ user }) => {
                       );
                     }
                   } else {
-                    // Pending connection request notifications 
                     return (
                       <div key={notif._id} className="notification-item">
-                        <p>{notif.senderName} wants to connect with you.</p>
+                        <p>
+                        <Link to={`/profile/${notif.senderId}`} className="notif-sender">
+                        {notif.senderName}
+                        </Link>{" "}
+                        wants to connect with you.
+                        </p>
                         <div className="notification-actions">
-                          <button
-                            onClick={() =>
-                              handleAccept(notif._id, notif.senderName)
-                            }
-                          >
-                            Accept
-                          </button>
-                          <button
-                            onClick={() =>
-                              handleReject(notif._id, notif.senderName)
-                            }
-                          >
-                            Reject
-                          </button>
+                        <button onClick={() => handleAccept(notif._id, notif.senderName)}>
+                        Accept
+                        </button>
+                        <button onClick={() => handleReject(notif._id, notif.senderName)}>
+                        Reject
+                        </button>
                         </div>
                       </div>
                     );

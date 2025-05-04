@@ -858,6 +858,19 @@ router.get("/users", async (req, res) => {
   }
 });
 
+// Get User Profile by ID
+router.get("/users/:id", async (req, res) => {
+  try {
+    const user = await User.findById(req.params.id)
+      .select("fullName profilePhoto coverPhoto homeBase createdAt birthyear gender bio");
+    if (!user) return res.status(404).json({ msg: "User not found" });
+    res.json(user);
+  } catch (err) {
+    console.error("Error fetching public user:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
 // Serve Uploaded Files
 router.use("/uploads", express.static(uploadDir));
 
