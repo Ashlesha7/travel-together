@@ -417,3 +417,11 @@
   font-size: 1rem;
   font-weight: 600;
 }
+
+.review-item       { margin-bottom: 1rem; }
+.stars             { font-size: 1.2rem; color: #f5b50a; }
+.review-comment    { margin: 0.25rem 0; }
+.review-meta       { color: #666; font-size: 0.8rem; }
+.review-comment {
+  word-break: break-word;   
+}

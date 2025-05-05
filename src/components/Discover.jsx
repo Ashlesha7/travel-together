@@ -15,6 +15,7 @@ import Navigation from "./Navigation";
 import Footer from "./Footer";
 import "./Discover.css"; 
 import RoutingMachine from "./RoutingMachine";
+import ReviewForm from "./ReviewForm";
 
 // Fix Leaflet's default icon paths 
 delete L.Icon.Default.prototype._getIconUrl;
@@ -95,6 +96,8 @@ const Discover = () => {
   const [user, setUser] = useState(null);
   const [selectedTrip, setSelectedTrip] = useState(null);
   const [showModal, setShowModal] = useState(false);
+  const [canReview, setCanReview] = useState(false);
+  const [reviewDone, setReviewDone] = useState(false);
 
   // Ref to hold the external container for routing instructions
   const instructionsRef = useRef(null);
@@ -126,6 +129,22 @@ const Discover = () => {
       })
       .catch((err) => console.error("Error fetching trips:", err));
   }, []);
+
+  useEffect(() => {
+    if (!selectedTrip || !user) {
+      setCanReview(false);
+      return;
+    }
+    const token = localStorage.getItem("token");
+    axios
+      .get(
+        `http://localhost:8080/api/notifications/connection-status?otherUserId=${selectedTrip.user._id}`,
+        { headers: { Authorization: token } }
+      )
+      .then((res) => setCanReview(res.data.connectionExists))  // true only if accepted
+      .catch(() => setCanReview(false));
+  }, [selectedTrip, user]);
+  
 
   // Filtering logic: skip user's own trips, then check other filters
   const filteredTrips = trips.filter((trip) => {
@@ -215,6 +234,7 @@ const Discover = () => {
                 receiverId: receiverId,
                 type: "connectRequest",
                 message: `${senderName} wants to connect with you.`,
+                tripId: trip._id,
               },
               { headers: { Authorization: token } }
             )
@@ -460,6 +480,21 @@ const Discover = () => {
             <div className="details-description">
               <p>{selectedTrip.shortDescription}</p>
             </div>
+
+            {/* ──────────────  REVIEW  ────────────── */}
+            {canReview && new Date(selectedTrip.endDate) < new Date() && !reviewDone && (
+              <ReviewForm
+              tripId={selectedTrip._id}
+              revieweeId={selectedTrip.user._id}
+              reviewerId={user._id}
+              onSubmitted={() => {
+                setReviewDone(true);
+                alert("Thanks for reviewing your companion!");
+               }}
+               />
+               )}
+               {reviewDone && <p className="thanks-msg">Your review was submitted.</p>}
+
 
             {/* Connect Button + View Profile Buttons */}
             <div className="details-connect">

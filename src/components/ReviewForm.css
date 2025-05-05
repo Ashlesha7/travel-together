@@ -1,0 +1,101 @@
+/* ReviewForm.css */
+
+/* overall form container */
+.review-form {
+    background: #fff;
+    padding: 1rem;
+    border-radius: 0.5rem;
+    max-width: 400px;
+    margin: 0 auto;
+  }
+  
+  /* center the form title */
+  .review-form__title {
+    text-align: center;
+    font-size: 1.25rem;
+    font-weight: 600;
+    color: #333;
+    margin-bottom: 1rem;
+  }
+  
+  /* Numeric rating above the stars */
+  .rating-value {
+    text-align: center;
+    font-size: 1.75rem;
+    font-weight: bold;
+    margin-bottom: 0.5rem;
+    color: #333;
+  }
+  
+  /* Flex row for the stars */
+  .star-container {
+    display: flex;
+    justify-content: center;
+    gap: 0.25rem;
+    margin-bottom: 1rem;
+  }
+  
+  /* Individual star buttons */
+  .star-btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+    font-size: 2.5rem;
+    line-height: 1;
+    transition: color 0.15s ease-in-out;
+    padding: 0;
+  }
+  
+  /* Filled stars */
+  .star-btn.filled {
+    color: #FFC107;   /* gold */
+    text-shadow: 0 0 2px rgba(0,0,0,0.3);
+  }
+  
+  /* Empty stars */
+  .star-btn.empty {
+    color: #E0E0E0;   /* light gray */
+  }
+  
+  /* Comment textarea styling */
+  .comment-box label {
+    display: block;
+    margin-bottom: 0.25rem;
+    font-weight: 500;
+  }
+  .comment-box textarea {
+    width: 100%;
+    border: 1px solid #ccc;
+    border-radius: 0.25rem;
+    padding: 0.5rem;
+    resize: vertical;
+  }
+  
+  /* Error message */
+  .error-message {
+    color: #E53E3E;
+    margin-bottom: 0.5rem;
+    text-align: center;
+  }
+  
+  /* Submit button (tan style, centered) */
+  .submit-btn {
+    display: block;
+    margin: 1rem auto 0;
+    padding: 0.75rem 1.5rem;
+    background: #B8A186; 
+    color: #1C1C1C;
+    border: none;
+    border-radius: 0.25rem;
+    font-weight: bold;
+    cursor: pointer;
+    transition: background 0.2s;
+  }
+  .submit-btn:hover:not(:disabled) {
+    background: #A38F71;
+  }
+  .submit-btn:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+  

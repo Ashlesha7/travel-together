@@ -14,11 +14,13 @@ const notificationRoutes = require("./notificationRoutes");
 const conversationRoutes = require("./conversationRoutes");
 const Message = require("./messageModel");
 const Conversation = require("./conversationModel");
+const reviewRoutes = require("./reviewRoutes"); 
 
 
 const adminRoutes = require('./admin/adminRoutes');
 const bcrypt = require("bcryptjs");
 const Admin = require("./admin/adminModel");
+const connectionRoutes = require("./connectionRoutes");
 
 
 const app = express();
@@ -96,6 +98,8 @@ app.use("/api", tripPlanRoutes);
 app.use("/api", notificationRoutes);
 app.use("/api", conversationRoutes);
 app.use("/api", adminRoutes);
+app.use("/api/reviews", reviewRoutes);
+app.use("/api/connections", connectionRoutes);  
 
 // Global Error Handling Middleware
 app.use((err, req, res, next) => {

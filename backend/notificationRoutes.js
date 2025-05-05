@@ -141,6 +141,7 @@ const express = require("express");
 const router = express.Router();
 const mongoose = require("mongoose");
 const Notification = require("./notificationModel");
+const Connection = require("./connectionModel");
 const jwt = require("jsonwebtoken");
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
 
@@ -160,7 +161,7 @@ function auth(req, res, next) {
 // 1) Send a notification
 router.post("/notifications/send", auth, async (req, res) => {
   try {
-    const { senderId, senderName, receiverId, type, message } = req.body;
+    const { senderId, senderName, receiverId, type, message, tripId } = req.body;
 
     //  validation
     if (!senderId || !receiverId || !type || !message) {
@@ -174,6 +175,7 @@ router.post("/notifications/send", auth, async (req, res) => {
       receiverId,
       type,
       message,
+      tripId,
     });
     await newNotification.save();
 
@@ -230,6 +232,17 @@ router.post("/notifications/respond", auth, async (req, res) => {
     }
 
     await notification.save();
+
+    // Check if the notification is a connection request
+    if (response === "accept") {
+      await Connection.create({
+        tripId:   notification.tripId, 
+        requester: notification.senderId,
+        requestee: notification.receiverId,
+        status:   "accepted",
+        chatRoomId: notification.chatRoomId
+      });
+    }
 
     // Create a response notification to inform the sender about the result.
     const responseNotification = new Notification({

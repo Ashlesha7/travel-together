@@ -141,3 +141,8 @@
 .view-all-btn:hover {
   opacity: 0.85;
 }
+
+.notification-item.review-reminder {
+  background: #fff8e1;           /* pale yellow */
+  border-left: 4px solid #f5b50a;
+}

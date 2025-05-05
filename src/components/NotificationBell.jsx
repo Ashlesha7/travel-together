@@ -216,6 +216,21 @@ const NotificationBell = ({ user }) => {
                           <p>{notif.message}</p>
                         </div>
                       );
+                    } else if (notif.type === "reviewReminder") {
+                      return (
+                        <div
+                          key={notif._id}
+                          className="notification-item review-reminder"
+                          onClick={async () => {
+                            await handleMarkAsRead(notif._id);           // mark read
+                            navigate(`/profile/${user._id}#reviews`);    // jump to your Reviews section
+                          }}
+                          style={{ cursor: "pointer" }}
+                        >
+                          <p>{notif.message}</p>
+                          <small>Tap to leave your review</small>
+                        </div>
+                      );
                     } else {
                       return (
                         <div key={notif._id} className="notification-item rejected">
