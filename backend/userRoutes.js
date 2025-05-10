@@ -580,6 +580,12 @@ router.post("/login", async (req, res) => {
     const isMatch = await bcrypt.compare(password, user.password);
     if (!isMatch) return res.status(400).json({ message: "Invalid credentials" });
 
+    if (user.isRejected) {
+      return res
+      .status(403)
+      .json({ message: "Your account has been rejected. Please enter the valid credentials and try again" });
+    }
+
     if (!user.isAccepted) {
       return res
         .status(403)

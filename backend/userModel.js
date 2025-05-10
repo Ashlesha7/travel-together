@@ -33,7 +33,8 @@ const UserSchema = new mongoose.Schema({
     resetCode: { type: String, default: "" },
     resetCodeExpiry: { type: Date },
     //profileComplete: { type: Boolean, default: false },
-    isAccepted: { type: Boolean, default: false }
+    isAccepted: { type: Boolean, default: false },
+    isRejected: { type: Boolean, default: false }
 });
 
 module.exports = mongoose.model('User', UserSchema);

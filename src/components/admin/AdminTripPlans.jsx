@@ -215,8 +215,9 @@ function AdminTripPlans() {
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(4) }}
           onMouseEnter={() => handleMouseEnter(4)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => navigate("/admin/reviews")}
         >
-          Settings
+          Ratings and Reviews
         </div>
 
         <div

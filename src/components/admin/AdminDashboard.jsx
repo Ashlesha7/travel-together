@@ -164,8 +164,9 @@ function AdminDashboard() {
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(3) }}
           onMouseEnter={() => handleMouseEnter(3)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => navigate("/admin/reviews")}
         >
-          Settings
+          Ratings and Reviews
         </div>
 
         <div

@@ -120,4 +120,19 @@ router.patch("/trip-plans/:tripId/complete", auth, async (req, res) => {
   }
 });
 
+// Get one trip‑plan by its id
+router.get("/trip-plans/:id", auth, async (req, res) => {
+  try {
+    const plan = await TripPlan
+      .findById(req.params.id)
+      .populate("user", "fullName profilePhoto");
+    if (!plan) return res.status(404).json({ msg: "Trip not found" });
+    res.json(plan);
+  } catch (err) {
+    console.error("Error fetching trip‑plan by id:", err);
+    res.status(500).json({ msg: "Server error" });
+  }
+});
+
+
 module.exports = router;

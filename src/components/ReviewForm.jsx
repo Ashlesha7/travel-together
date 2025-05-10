@@ -6,6 +6,7 @@ export default function ReviewForm({
   tripId,
   revieweeId,
   reviewerId,
+  tripName,
   onSubmitted,
 }) {
   const [rating, setRating] = useState(0);
@@ -55,6 +56,13 @@ export default function ReviewForm({
       onSubmit={handleSubmit}
       className="review-form"
     >
+      {/* Trip name */}
+      {tripName && (
+        <div className="review-form-trip">
+          Reviewing trip to <strong>{tripName}</strong>
+          </div>
+      )}
+      
       <h3 className="review-form__title">Leave a Review</h3>
 
       {/* Numeric label */}
@@ -107,5 +115,6 @@ ReviewForm.propTypes = {
   tripId: PropTypes.string.isRequired,
   revieweeId: PropTypes.string.isRequired,
   reviewerId: PropTypes.string.isRequired,
+  tripName: PropTypes.string,
   onSubmitted: PropTypes.func.isRequired,
 };

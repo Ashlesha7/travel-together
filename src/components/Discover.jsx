@@ -209,7 +209,10 @@ const Discover = () => {
           axios
             .post(
               "http://localhost:8080/api/conversations/find-or-create",
-              { otherUserId: trip.user._id },
+              { 
+                otherUserId: trip.user._id,
+                tripPlanId: trip._id, 
+              },
               { headers: { Authorization: token } }
             )
             .then((resp) => {

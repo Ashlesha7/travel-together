@@ -262,6 +262,7 @@ import AdminTripPlans from './components/admin/AdminTripPlans';
 import AdminReports from './components/admin/AdminReports';
 import withProfileCompletionCheck from "./withProfileCompletionCheck";
 import AdminNotifications from './components/admin/AdminNotifications';
+import AdminReviews from "./components/admin/AdminReviews"; 
 
 const ProtectedStartTrip = withProfileCompletionCheck(StartTrip);
 const ProtectedDiscover = withProfileCompletionCheck(Discover);
@@ -325,6 +326,7 @@ function App() {
           <Route path="/admin/trip-plans" element={<AdminTripPlans />} />
           <Route path="/admin/reports" element={<AdminReports />} />
           <Route path="/admin/notifications" element={<AdminNotifications />} />
+          <Route path="/admin/reviews" element={<AdminReviews />} />
 
           {/* Redirect any unknown routes to Home Page */}
           <Route path="*" element={<Navigate to="/" />} />

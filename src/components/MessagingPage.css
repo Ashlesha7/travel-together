@@ -180,8 +180,99 @@
 }
 
 .new-message-indicator {
-  color: #d00;          /* Red color to attract attention */
+  color: #d00;          
   font-size: 0.85rem;
   font-weight: bold;
   margin-left: 5px;
 }
+
+/* —— review cards  —— */
+.reviews-section {
+  margin-bottom: 1rem;
+}
+.review-card {
+  display: flex;
+  gap: .5rem;
+  padding: .5rem 0;
+  border-bottom: 1px solid #eee;
+}
+.review-card img {
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+}
+.review-card p {
+  margin: .25rem 0 0;
+}
+
+/* —— modal form  —— */
+.leave-review-form {
+  margin: 1rem 0;
+  padding-top: 1rem;
+  border-top: 1px solid #ddd;
+}
+.review-modal-backdrop {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0,0,0,0.5);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 1000;
+}
+.review-modal {
+  background: white;
+  padding: 2rem;
+  border-radius: 8px;
+  position: relative;
+  max-width: 400px;
+  width: 90%;
+}
+.close-modal {
+  position: absolute;
+  top: .5rem;
+  right: .5rem;
+  background: transparent;
+  border: none;
+  font-size: 1.2rem;
+  cursor: pointer;
+}
+
+/* ——  header + inline “Leave a review” —— */
+.chat-header-row {
+  display: inline-flex;
+  align-items: baseline;
+}
+.chat-header-name {
+  font-size: 1.2rem;
+  font-weight: bold;
+  margin-right: .5rem;
+}
+.leave-review-inline {
+  font-size: .8rem;
+  color: #2C3C30;
+  text-decoration: none;
+}
+.leave-review-inline:hover {
+  text-decoration: underline;
+}
+
+/* footer of the review‑modal, holds our new button */
+.review-modal-footer {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+/* style for the “View Profile” link*/
+.view-profile-link {
+  font-size: 0.8rem;
+  color: #2C3C30;
+  text-decoration: none;
+  margin-left: 0.5rem;
+  cursor: pointer;
+}
+.view-profile-link:hover {
+  text-decoration: underline;
+}
+

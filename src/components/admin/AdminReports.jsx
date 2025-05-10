@@ -163,7 +163,7 @@ function AdminReports() {
             onMouseEnter={() => handleMouseEnter(4)}
             onMouseLeave={handleMouseLeave}
           >
-            Settings
+            Ratings and Reviews
           </div>
 
           <div
@@ -248,8 +248,9 @@ function AdminReports() {
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(4) }}
           onMouseEnter={() => handleMouseEnter(4)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => navigate("/admin/reviews")}
         >
-          Settings
+          Ratings and Reviews
         </div>
 
         <div

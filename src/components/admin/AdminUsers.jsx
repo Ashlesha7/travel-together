@@ -22,6 +22,7 @@ function AdminUsers() {
 
         // read which IDs we've accepted previously
         const storedAccepted = JSON.parse(localStorage.getItem('acceptedIds') || '[]');
+        const storedRejected = JSON.parse(localStorage.getItem('rejectedIds') || '[]');
 
         // sort and annotate each user with isAccepted boolean
         const sortedUsers = res.data
@@ -29,6 +30,7 @@ function AdminUsers() {
           .map(u => ({
             ...u,
             isAccepted: storedAccepted.includes(u._id),
+            isRejected: storedRejected.includes(u._id),
           }));
 
         setUsers(sortedUsers);
@@ -64,7 +66,7 @@ function AdminUsers() {
     setSelectedUser(null);
   };
 
-  // --- NEW: Accept handler with localStorage persistence & one‑click disable ---
+  // ---  Accept handler with localStorage persistence & one‑click disable ---
   const handleAccept = async () => {
     if (!selectedUser || selectedUser.isAccepted) return;
 
@@ -98,6 +100,38 @@ function AdminUsers() {
     }
   };
   // --------------------------------------------------------------------------
+
+    // NEW: Reject handler with one‑click disable
+    const handleReject = async () => {
+      if (!selectedUser || selectedUser.isRejected) return;
+  
+      // 1) update UI immediately
+      setSelectedUser(prev => ({ ...prev, isRejected: true }));
+      setUsers(prev =>
+        prev.map(u =>
+          u._id === selectedUser._id ? { ...u, isRejected: true } : u
+        )
+      );
+  
+      // 2) remember in localStorage so a refresh keeps it disabled
+      const rejectedIds = JSON.parse(localStorage.getItem('rejectedIds') || '[]');
+      localStorage.setItem(
+        'rejectedIds',
+        JSON.stringify([...rejectedIds, selectedUser._id])
+      );
+  
+      // 3) fire your PATCH
+      try {
+        const token = localStorage.getItem('adminToken');
+        await axios.patch(
+          `http://localhost:8080/api/admin/users/${selectedUser._id}/reject`,
+          {},
+          { headers: { Authorization: `Bearer ${token}` } }
+        );
+      } catch (err) {
+        console.error('Error rejecting user:', err);
+      }
+    };
 
   // Hover styling for sidebar
   const handleMouseEnter = (index) => setHoveredItem(index);
@@ -216,6 +250,16 @@ function AdminUsers() {
     borderRadius: '4px',
     cursor: 'pointer',
   };
+  const rejectBtnStyle = {
+    flex: 1,
+    padding: '10px 20px',
+    backgroundColor: '#e74c3c',
+    color: '#fff',
+    border: 'none',
+    borderRadius: '4px',
+    cursor: 'pointer',
+  };
+
 
   return (
     <div style={containerStyle}>
@@ -270,8 +314,9 @@ function AdminUsers() {
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(3) }}
           onMouseEnter={() => handleMouseEnter(3)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => navigate("/admin/reviews")}
         >
-          Settings
+          Ratings and Reviews
         </div>
         <div
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(4) }}
@@ -403,10 +448,23 @@ function AdminUsers() {
                     : {}),
                 }}
                 onClick={handleAccept}
-                disabled={selectedUser.isAccepted}
+                disabled={selectedUser.isAccepted || selectedUser.isRejected}
               >
                 {selectedUser.isAccepted ? 'Accepted' : 'Accept User'}
               </button>
+              {/* REJECT */}
+              <button
+              style={{
+                ...rejectBtnStyle,
+                ...(selectedUser.isRejected
+                  ? { opacity: 0.5, cursor: 'not-allowed', pointerEvents: 'none' }
+                  : {})
+                }}
+                onClick={handleReject}
+                disabled={selectedUser.isRejected || selectedUser.isAccepted}
+                 >
+                  {selectedUser.isRejected ? 'Rejected' : 'Reject User'}
+                  </button>
             </div>
           </div>
         </div>

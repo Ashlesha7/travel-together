@@ -162,39 +162,58 @@ function auth(req, res, next) {
 // 1) Find or create a conversation with "otherUserId"
 router.post("/conversations/find-or-create", auth, async (req, res) => {
   try {
-    const { otherUserId } = req.body;
-    if (!otherUserId) {
-      return res.status(400).json({ msg: "Missing otherUserId" });
+    const { otherUserId, tripPlanId } = req.body;
+    if (!otherUserId ) {
+      return res.status(400).json({ msg: "Missing otherUserId " });
     }
 
-    // Check if conversation already exists
-    let conversation = await Conversation.findOne({
-      participants: { $all: [req.user.id, otherUserId] },
-    });
+    // // Check if conversation already exists
+    // let conversation = await Conversation.findOne({
+    //   participants: { $all: [req.user.id, otherUserId] },
+    //   tripPlanId,
+    // });
 
-    // If none, create a new conversation
-    if (!conversation) {
-      conversation = new Conversation({
-        participants: [req.user.id, otherUserId],
-      });
-      await conversation.save();
-    }
+    // // If none, create a new conversation
+    // if (!conversation) {
+    //   conversation = new Conversation({
+    //     participants: [req.user.id, otherUserId],
+    //     tripPlanId,
+    //   });
+    //   await conversation.save();
+    // }
+    // Build the filter: always require participants; only add tripPlanId if given
+const filter = { participants: { $all: [req.user.id, otherUserId] } };
+if (tripPlanId) filter.tripPlanId = tripPlanId;
+
+let conversation = await Conversation.findOne(filter);
+
+if (!conversation) {
+  // Build the creation data the same way
+  const convData = { participants: [req.user.id, otherUserId] };
+  if (tripPlanId) convData.tripPlanId = tripPlanId;
+
+  conversation = new Conversation(convData);
+  await conversation.save();
+}
+
 
     // Populate participants to return the other user's details
     await conversation.populate("participants", "fullName profilePhoto");
+    await conversation.populate("tripPlanId", "status");
 
     // Identify the other participant
     const otherParticipant = conversation.participants.find(
       (p) => String(p._id) !== String(req.user.id)
     );
-    const responseData = {
+    res.json({
       _id: conversation._id,
       userId: otherParticipant ? otherParticipant._id : null,
       name: otherParticipant ? otherParticipant.fullName : "Unknown",
       photo: otherParticipant ? otherParticipant.profilePhoto : "",
-    };
-
-    res.json(responseData);
+      tripId:conversation.tripPlanId?._id,
+      tripStatus: conversation.tripPlanId?.status,
+    });
+  
   } catch (err) {
     console.error("Error creating/finding conversation:", err);
     res.status(500).json({ msg: "Server error", error: err.message });
@@ -214,10 +233,17 @@ router.get("/conversations", auth, async (req, res) => {
         path: "participants",
         select: "fullName profilePhoto",
       });
+
+      //also fetch the associated tripPlan's status field
+      await Conversation.populate(conversations, {
+        path: "tripPlanId",
+        select: "status",
+      });
       
     //  for frontend: include details of the other participant only
     const convData = await Promise.all(
       conversations.map(async (conv) => {
+        const tripId = conv.tripPlanId?._id;
         // Identify the other participant for display purposes
         const otherParticipant = conv.participants.find(
           (p) => String(p._id) !== String(userId)
@@ -248,9 +274,12 @@ router.get("/conversations", auth, async (req, res) => {
         
         return {
           _id: conv._id,
+          tripId: conv.tripPlanId?._id ,
+          tripStatus: conv.tripPlanId?.status,
           userId: otherParticipant ? otherParticipant._id : null,
           name: otherParticipant ? otherParticipant.fullName : "Unknown",
           photo: otherParticipant ? otherParticipant.profilePhoto : "",
+          tripStatus: conv.tripPlanId?.status,
           unreadCount,
           lastUnreadSenderName,
         };

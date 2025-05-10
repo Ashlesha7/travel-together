@@ -185,8 +185,9 @@ function AdminNotifications() {
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(3) }}
           onMouseEnter={() => handleMouseEnter(3)}
           onMouseLeave={handleMouseLeave}
+          onClick={() => navigate("/admin/reviews")}
         >
-          Settings
+          Ratings and Reviews
         </div>
         <div
           style={{ ...sidebarItemStyle, ...getSidebarItemDynamicStyle(4) }}

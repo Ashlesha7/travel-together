@@ -57,6 +57,12 @@ const withProfileCompletionCheck = (WrappedComponent) => {
       return <Navigate to="/profile" replace />;
     }
 
+    // //  if admin hasn’t approved yet, notify and send back to profile
+    // if (!user.isAccepted) {
+    //   alert("Your account is pending admin approval. Please wait for an administrator to approve your account.");
+    //   return <Navigate to="/profile" replace />;
+    // }
+
     // If user is authenticated and the profile is complete, render the wrapped component
     return <WrappedComponent {...props} />;
   };

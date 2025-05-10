@@ -5,6 +5,7 @@ import "./Profile.css";
 
 export default function ProfilePublic({ userId }) {
   const [user, setUser] = useState(null);
+  const [reviews, setReviews] = useState([]);
 
   useEffect(() => {
     async function fetchPublicUser() {
@@ -19,6 +20,18 @@ export default function ProfilePublic({ userId }) {
     }
     if (userId) fetchPublicUser();
   }, [userId]);
+
+    // fetch this user’s received reviews
+   useEffect(() => {
+     if (!userId) return;
+     const token = localStorage.getItem("token");
+     axios
+       .get(`http://localhost:8080/api/reviews/user/${userId}`, {
+         headers: { Authorization: token },
+       })
+       .then(res => setReviews(res.data))
+       .catch(err => console.error("Error fetching reviews:", err));
+   }, [userId]);
 
   const formatJoinedDate = (dateString) => {
     if (!dateString) return "N/A";
@@ -100,6 +113,28 @@ export default function ProfilePublic({ userId }) {
               <p>{user.bio || "No bio yet."}</p>
             </div>
           </div>
+        </div>
+        <div className="info-container">
+           <hr/>
+            <div className="profile-info-section">
+              <h2>Reviews</h2>
+              {reviews.length === 0 ? (
+                <p>No reviews yet.</p>
+                ) : (
+                  reviews.map(r => (
+                    <div key={r._id} className="review-item">
+                      <div className="stars">
+                        {"★".repeat(r.rating) + "☆".repeat(5 - r.rating)}
+                        </div>
+                      <p className="review-comment">{r.comment}</p>
+                      <small className="review-meta">
+                        by {r.reviewerId?.fullName || "Anonymous"} on{" "}
+                        {new Date(r.createdAt).toLocaleDateString()}
+                      </small>
+                      </div>
+                  ))
+                )}
+            </div>
         </div>
       </div>
 

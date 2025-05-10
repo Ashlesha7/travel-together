@@ -93,7 +93,7 @@ export default function Profile() {
     const token = localStorage.getItem("token");
     if (!token) return;
   
-    const profileId = id || currentUserId;  // owner or public view
+    const profileId = id || user._id;  //owner
     if (!profileId) return;           
     axios
       .get(`http://localhost:8080/api/reviews/user/${profileId}`, {
@@ -101,7 +101,7 @@ export default function Profile() {
       })
       .then((res) => setReviews(res.data))
       .catch((err) => console.error("Error fetching reviews:", err));
-  }, [user, id, currentUserId]);
+  }, [user, id]);
   
 
   // Cover photo upload
@@ -642,34 +642,35 @@ export default function Profile() {
           </div>
         </div>
       )}
+      <div className="info-container">
+        <hr />
+        <div className="profile-info-section">
+           <h2>Reviews</h2>
+           {reviews.length === 0 ? (
+              <p>No reviews yet.</p>  
+            ) : (
+              reviews.map((r) => (
+                <div key={r._id} className="review-item">
+                  <div className="stars">
+                    {"★".repeat(r.rating) + "☆".repeat(5 - r.rating)}
+                  </div>
+                  <p className="review-comment">{r.comment}</p>
+                  <small className="review-meta">
+                    by {r.reviewerId?.fullName || "Anonymous"} on{" "}
+                    {new Date(r.createdAt).toLocaleDateString()}
+                  </small>
+                </div>
+              ))
+            )}
+        </div>
+        </div>
       </>
       ) : (
         <ProfilePublic userId={id} />
       )}
        {/* Reviews & Ratings */}
 {/* Reviews & Ratings */}
-<div className="info-container">             {/* ← wrap in your same centering container */}
-  <hr />
-  <div className="profile-info-section">
-    <h2>Reviews</h2>
-    {reviews.length === 0 ? (
-      <p>No reviews yet.</p>
-    ) : (
-      reviews.map((r) => (
-        <div key={r._id} className="review-item">
-          <div className="stars">
-            {"★".repeat(r.rating) + "☆".repeat(5 - r.rating)}
-          </div>
-          <p className="review-comment">{r.comment}</p>
-          <small className="review-meta">
-          by {r.reviewerId?.fullName /* populated */ || r.reviewerName /* fallback */ || "Anonymous"}
-         on{new Date(r.createdAt).toLocaleDateString()}
-          </small>
-        </div>
-      ))
-    )}
-  </div>
-</div>
+
       <Footer />
     </div> 
   );

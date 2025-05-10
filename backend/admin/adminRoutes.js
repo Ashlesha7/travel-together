@@ -7,6 +7,7 @@ const Admin = require("../admin/adminModel");
 const User = require("../userModel");        
 const TripPlan = require("../tripPlanModel"); 
 const Notification = require("../notificationModel");
+const Review = require("../reviewModel");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
@@ -97,7 +98,7 @@ router.get("/admin/dashboard", verifyAdmin, async (req, res) => {
 router.get("/admin/users", verifyAdmin, async (req, res) => {
   try {
     // Return only the fields you wish to display (omit sensitive data)
-    const users = await User.find({}, "fullName email phoneNumber createdAt citizenshipNumber citizenshipPhoto birthYear gender bio homeBase profilePhoto");
+    const users = await User.find({}, "fullName email phoneNumber createdAt citizenshipNumber citizenshipPhoto birthYear gender bio homeBase profilePhoto isAccepted isRejected");
     return res.status(200).json(users);
   } catch (error) {
     console.error("Error fetching users:", error);
@@ -139,6 +140,26 @@ router.patch(
       return res
         .status(500)
         .json({ msg: "Server error", error: error.message });
+    }
+  }
+);
+
+// Reject a user (admin must reject before they can log in)
+router.patch(
+  "/admin/users/:id/reject",
+  verifyAdmin,
+  async (req, res) => {
+    try {
+      const user = await User.findByIdAndUpdate(
+        req.params.id,
+        { isRejected: true, isAccepted: false },
+        { new: true }
+      );
+      if (!user) return res.status(404).json({ msg: "User not found" });
+      return res.status(200).json({ msg: "User rejected", user });
+    } catch (error) {
+      console.error("Reject user error:", error);
+      return res.status(500).json({ msg: "Server error", error: error.message });
     }
   }
 );
@@ -313,5 +334,45 @@ router.get("/admin/reports", verifyAdmin, async (req, res) => {
     res.status(500).json({ msg: "Server error", error: error.message });
   }
 });
+
+// Get all reviews (for admin management)
+router.get("/admin/reviews", verifyAdmin, async (req, res) => {
+  try {
+    // pagination support
+    const { page = 1, limit = 20 } = req.query;
+    const skip = (page - 1) * limit;
+
+    // fetch reviews, populate reviewer & reviewee names/photos
+    const reviews = await Review.find()
+      .populate("reviewerId", "fullName profilePhoto")
+      .populate("revieweeId", "fullName profilePhoto")
+      .sort({ createdAt: -1 })
+      .skip(skip)
+      .limit(parseInt(limit, 10));
+
+    const total = await Review.countDocuments();
+
+    return res.status(200).json({ total, reviews });
+  } catch (err) {
+    console.error("Error fetching admin reviews:", err);
+    return res.status(500).json({ msg: "Server error", error: err.message });
+  }
+});
+
+// Delete a review by ID (admin only)
+router.delete(
+  "/admin/reviews/:id",
+  verifyAdmin,
+  async (req, res) => {
+    try {
+      const deleted = await Review.findByIdAndDelete(req.params.id);
+      if (!deleted) return res.status(404).json({ msg: "Review not found" });
+      return res.status(200).json({ msg: "Review deleted" });
+    } catch (err) {
+      console.error("Error deleting review:", err);
+      return res.status(500).json({ msg: "Server error" });
+    }
+  }
+);
 
 module.exports = router;
