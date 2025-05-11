@@ -34,7 +34,8 @@ const UserSchema = new mongoose.Schema({
     resetCodeExpiry: { type: Date },
     //profileComplete: { type: Boolean, default: false },
     isAccepted: { type: Boolean, default: false },
-    isRejected: { type: Boolean, default: false }
+    isRejected: { type: Boolean, default: false },
+    isGoogleUser: { type: Boolean, default: false },
 });
 
 module.exports = mongoose.model('User', UserSchema);

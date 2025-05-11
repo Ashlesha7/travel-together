@@ -84,6 +84,12 @@ function AdminUsers() {
       'acceptedIds',
       JSON.stringify([...acceptedIds, selectedUser._id])
     );
+    const me = JSON.parse(localStorage.getItem('user') || '{}');
+    if (me._id === selectedUser._id) {
+      me.isAccepted = true;
+      localStorage.setItem('user', JSON.stringify(me));
+    }
+
 
     // 3) fire your PATCH
     try {
@@ -119,6 +125,12 @@ function AdminUsers() {
         'rejectedIds',
         JSON.stringify([...rejectedIds, selectedUser._id])
       );
+      const me = JSON.parse(localStorage.getItem('user') || '{}');
+      if (me._id === selectedUser._id) {
+        me.isRejected = true;
+        me.isAccepted = false; // Ensure isAccepted is set to false
+        localStorage.setItem('user', JSON.stringify(me));
+      }
   
       // 3) fire your PATCH
       try {

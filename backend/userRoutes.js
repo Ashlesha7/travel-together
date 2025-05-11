@@ -498,7 +498,11 @@ router.post("/refresh-token", async (req, res) => {
       user: {
         id: user._id.toString(),
         fullName: user.fullName,
-        email: user.email
+        email: user.email,
+        phoneNumber: user.phoneNumber,
+        citizenshipNumber: user.citizenshipNumber,
+        citizenshipPhoto: user.citizenshipPhoto,
+        birthYear: user.birthYear,
       }
     });
   } catch (error) {
@@ -527,6 +531,9 @@ router.post("/google-signin", async (req, res) => {
         email: email,
         phoneNumber: "",
         citizenshipNumber: "",
+        isGoogleUser: true,
+        isAccepted: false,
+        isRejected: false,
         password: "",
         citizenshipPhoto: "",
         profilePhoto: picture,
@@ -560,6 +567,10 @@ router.post("/google-signin", async (req, res) => {
         phoneNumber: user.phoneNumber,
         citizenshipNumber: user.citizenshipNumber,
         citizenshipPhoto: user.citizenshipPhoto,
+        birthYear: user.birthYear,
+        isGoogleUser: user.isGoogleUser,
+         isAccepted: user.isAccepted,
+        isRejected: user.isRejected,
         profileComplete: !!(user.phoneNumber && user.citizenshipNumber && user.citizenshipPhoto),
       },
     });
@@ -606,6 +617,7 @@ router.post("/login", async (req, res) => {
         phoneNumber: user.phoneNumber,
         citizenshipNumber: user.citizenshipNumber,
         citizenshipPhoto: user.citizenshipPhoto,
+        birthYear: user.birthYear, 
       },
     });
   } catch (error) {
@@ -667,13 +679,16 @@ router.post(
       console.log(" Received signup request:", req.body);
       console.log(" Received files:", req.files);
 
-      const { fullName, email, phoneNumber, citizenshipNumber, password } = req.body;
+      const { fullName, email, phoneNumber, citizenshipNumber, dateOfBirth, password } = req.body;
 
       if (!email.includes('@') || !email.includes('.')) {
         return res.status(400).json({ msg: "Invalid email format" });
       }
       if (citizenshipNumber.length < 16) { 
         return res.status(400).json({ msg: "Citizenship number too short" });
+      }
+      if (!dateOfBirth) {
+        return res.status(400).json({ msg: "Date of birth is required" });
       }
       if (phoneNumber.length < 10) { 
         return res.status(400).json({ msg: "Invalid phone number" });
@@ -695,9 +710,13 @@ router.post(
         email,
         phoneNumber,
         citizenshipNumber,
+         birthYear: dateOfBirth, 
         password: hashedPassword,
         citizenshipPhoto: "uploads/" + req.files.citizenshipPhoto[0].filename,
         profilePhoto: "uploads/" + req.files.profilePhoto[0].filename,
+        isAccepted: false,
+        isRejected: false,
+        isGoogleUser: false,
       });
 
       await newUser.save();
@@ -868,7 +887,7 @@ router.get("/users", async (req, res) => {
 router.get("/users/:id", async (req, res) => {
   try {
     const user = await User.findById(req.params.id)
-      .select("fullName profilePhoto coverPhoto homeBase createdAt birthyear gender bio");
+      .select("fullName profilePhoto coverPhoto homeBase createdAt birthYear gender bio");
     if (!user) return res.status(404).json({ msg: "User not found" });
     res.json(user);
   } catch (err) {

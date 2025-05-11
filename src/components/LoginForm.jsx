@@ -203,8 +203,9 @@ function LoginForm({ switchToSignup }) {
     } catch (error) {
       console.error("❌ Login failed:", error.response?.data);
       if (error.response?.status === 403) {
-        if (error.response.data.message === "Your account has been rejected.") {
-          setErrorMessage("Your account has been rejected. Please enter valid credentials and try again.");
+         const serverMessage = error.response.data.message;
+        if (serverMessage === "Your account has been rejected. Please enter the valid credentials and try again") {
+          setErrorMessage(serverMessage);
         } else {
         setErrorMessage("Your account is pending admin approval.");
         }

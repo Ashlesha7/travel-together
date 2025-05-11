@@ -126,7 +126,10 @@ router.patch(
     try {
       const user = await User.findByIdAndUpdate(
         req.params.id,
-        { isAccepted: true },
+        { isAccepted: true,
+          isRejected: false 
+         },
+
         { new: true }
       );
       if (!user) {

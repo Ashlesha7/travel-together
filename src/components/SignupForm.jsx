@@ -334,6 +334,24 @@ const validateSignup = (data) => {
     if (!data.citizenshipPhoto) errors.citizenshipPhoto = "Upload citizenship photo";
     if (!data.profilePhoto) errors.profilePhoto = "Upload profile photo";
 
+    // Date of Birth validation
+     const dobRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+      if (!dobRegex.test(data.dateOfBirth)) {
+         errors.dateOfBirth = "Date must be in DD/MM/YYYY format";
+         } else {
+            const [d, m, y] = data.dateOfBirth.split("/").map(Number);
+            const birth = new Date(y, m - 1, d);
+            const today = new Date();
+            let age = today.getFullYear() - birth.getFullYear();
+            if (
+                 today.getMonth() < birth.getMonth() ||
+                 (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+            ) {
+                age--;
+            }
+            if (age < 18) errors.dateOfBirth = "You must be at least 18 years old";
+        }
+
     return errors;
 };
 
@@ -347,6 +365,7 @@ function SignupForm({ switchToLogin }) {
         email: "",
         phoneNumber: "",
         citizenshipNumber: "",
+        dateOfBirth: "",
         citizenshipPhoto: null,
         profilePhoto: null,
         password: "",
@@ -366,6 +385,15 @@ function SignupForm({ switchToLogin }) {
     };
 
     const nextStep = () => {
+        // On step 1, validate DOB and legal age
+        if (currentStep === 1) {
+            const step1Errors = validateSignup(formData);
+            if (step1Errors.dateOfBirth) {
+                setErrors(step1Errors);
+                alert(step1Errors.dateOfBirth);
+                return;
+            }
+        }
         if (currentStep < 3) setCurrentStep(currentStep + 1);
     };
 
@@ -388,6 +416,7 @@ function SignupForm({ switchToLogin }) {
         data.append("email", formData.email);
         data.append("phoneNumber", formData.phoneNumber);
         data.append("citizenshipNumber", formData.citizenshipNumber);
+        data.append("dateOfBirth", formData.dateOfBirth);
         data.append("password", formData.password);
         data.append("citizenshipPhoto", formData.citizenshipPhoto);
         data.append("profilePhoto", formData.profilePhoto);
@@ -454,6 +483,19 @@ function SignupForm({ switchToLogin }) {
                             required
                         />
                         {errors.phoneNumber && <span className="error-text">{errors.phoneNumber}</span>}
+
+                        <label htmlFor="dateOfBirth">Date of Birth (DD/MM/YYYY)</label>
+                        <input
+                        type="text"
+                        id="dateOfBirth"
+                        name="dateOfBirth"
+                        placeholder="DD/MM/YYYY"
+                        value={formData.dateOfBirth}
+                        onChange={handleChange}
+                        required
+                        />
+                        {errors.dateOfBirth && <span className="error-text">{errors.dateOfBirth}</span>}
+
 
                         <button type="button" className="next-btn" onClick={nextStep}>
                             Next

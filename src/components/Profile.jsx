@@ -15,6 +15,8 @@ export default function Profile() {
   const [user, setUser] = useState(null);
   const [coverFile, setCoverFile] = useState(null);
   const [reviews, setReviews] = useState([]);   
+  const [errors, setErrors] = useState({});
+
 
   // "About Me" states
   const [showAboutEdit, setShowAboutEdit] = useState(false);
@@ -75,6 +77,7 @@ export default function Profile() {
       }
 
       setUser(response.data);
+      localStorage.setItem("user", JSON.stringify(response.data));
     } catch (error) {
       console.error("Error fetching user:", error);
       if (error.response?.status === 401) {
@@ -153,8 +156,34 @@ export default function Profile() {
     setTempGender(user?.gender || "");
     setShowAboutEdit(true);
   };
+  
 
   const saveAboutMe = async () => {
+    // 1) validate format
+  const dobRegex = /^(\d{2})\/(\d{2})\/(\d{4})$/;
+  if (!dobRegex.test(tempBirthYear)) {
+    setErrors(err => ({ ...err, birthYear: "Please use DD/MM/YYYY" }));
+    return;
+  }
+
+  // 2) compute age
+  const [d, m, y] = tempBirthYear.split("/").map(Number);
+  const birth = new Date(y, m - 1, d);
+  const today = new Date();
+  let age = today.getFullYear() - birth.getFullYear();
+  if (
+    today.getMonth() < birth.getMonth() ||
+    (today.getMonth() === birth.getMonth() && today.getDate() < birth.getDate())
+  ) {
+    age--;
+  }
+  if (age < 18) {
+    setErrors(err => ({ ...err, birthYear: "You must be at least 18" }));
+    return;
+  }
+
+  // 3) clear any previous error
+  setErrors(err => ({ ...err, birthYear: "" }));
     try {
       const token = localStorage.getItem("token");
       if (!token) return;
@@ -378,17 +407,19 @@ export default function Profile() {
 
       {/* Incomplete banner */}
       {user &&
+      user.isGoogleUser && 
         (!user.phoneNumber ||
           !user.citizenshipNumber ||
-          !user.citizenshipPhoto) && (
+          !user.citizenshipPhoto ||
+          !user.birthYear) && (
           <div className="incomplete-profile-banner">
-            Your profile is incomplete. Please update your phone number,
+            Your profile is incomplete. Please update your phone number, Birth Year,
             citizenship number, and upload your citizenship photo to gain full
             access to all features.
           </div>
         )}
 
-      {/* Main Content */}
+      {/* Main Content */}  
       <div className="profile-main">
         <div className="profile-header">
           <div className="profile-picture-wrapper">
@@ -434,6 +465,13 @@ export default function Profile() {
                   : "N/A"}
               </p>
               <p>Birth Year: {user?.birthYear || "Not specified"}</p>
+              {user?.birthYear && (() => {
+                const [d,m,y] = user.birthYear.split("/").map(Number);
+                const b = new Date(y,m-1,d), t = new Date();
+                let age = t.getFullYear() - b.getFullYear();
+                if (t.getMonth()<b.getMonth()|| (t.getMonth()===b.getMonth()&&t.getDate()<b.getDate())) age--;
+                return <p>Age: {age}</p>;
+              })()}
               <p>Gender: {user?.gender || "Not specified"}</p>
             </div>
           </div>
@@ -534,12 +572,18 @@ export default function Profile() {
               value={tempHomeBase}
               onChange={(e) => setTempHomeBase(e.target.value)}
             />
-            <label>Birth Date:</label>
+            <label>Birth Date (DD/MM/YYYY):</label>
             <input
-              type="date"
+              type="text"
+              placeholder="DD/MM/YYYY"
               value={tempBirthYear}
               onChange={(e) => setTempBirthYear(e.target.value)}
-            />
+              //pattern="\d{2}/\d{2}/\d{4}"
+              //inputMode="numeric"
+              required
+              />
+              {errors.birthYear && <span className="error-text">{errors.birthYear}</span>}
+            
             <label>Gender:</label>
             <select
               value={tempGender}
