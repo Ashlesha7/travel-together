@@ -262,13 +262,22 @@ import AdminTripPlans from './components/admin/AdminTripPlans';
 import AdminReports from './components/admin/AdminReports';
 import withProfileCompletionCheck from "./withProfileCompletionCheck";
 import AdminNotifications from './components/admin/AdminNotifications';
-import AdminReviews from "./components/admin/AdminReviews"; 
+import AdminReviews from "./components/admin/AdminReviews";
 
 const ProtectedStartTrip = withProfileCompletionCheck(StartTrip);
 const ProtectedDiscover = withProfileCompletionCheck(Discover);
 const ProtectedMessagingPage = withProfileCompletionCheck(MessagingPage);
 
 function App() {
+  useEffect(() => {
+    const userJson = localStorage.getItem("user");
+    let theme = "light";
+    if (userJson) {
+      const { _id } = JSON.parse(userJson);
+      theme = localStorage.getItem(`theme_${_id}`) || "light";
+    }
+    document.body.classList.toggle("dark-theme", theme === "dark");
+    }, []);
   const [isLoginActive, setIsLoginActive] = useState(true);
   const [user, setUser] = useState(null);
 

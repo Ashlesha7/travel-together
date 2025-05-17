@@ -76,3 +76,31 @@
   line-height: 20px;
   text-align: center;
 }
+
+/* Dark Theme Navbar */
+body.dark-theme .fullpage-navbar {
+  background-color: #1F2A24; /* Darker green/black shade */
+  color: #BFB4A0; /* Light tan text */
+  border-bottom: 1px solid #3A4A3E; /* subtle border */
+}
+
+body.dark-theme .navbar-right button {
+  background-color: #374B3C; /* Dark green button background */
+  color: #A8A08C;            /* Light tan text */
+  border: none;
+}
+
+body.dark-theme .navbar-right button:hover {
+  background-color: #2C3C30; /* Slightly lighter on hover */
+  color: #EAE7DC;
+}
+
+body.dark-theme .navbar-user {
+  border: 2px solid #A8A08C; /* subtle border around user pic */
+}
+
+body.dark-theme .message-badge {
+  background-color: #e74c3c; /* Bright red badge */
+  color: #fff;
+  border: 1px solid #911616;
+}

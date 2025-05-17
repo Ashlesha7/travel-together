@@ -13,7 +13,6 @@ import pokhara from "../assets/pokhara.jpg";
 import mustang from "../assets/mustang.jpg";
 import langtang from "../assets/langtang.jpg";
 
-
 import notificationIcon from "../assets/notification.png";
 
 const HomePage = () => {
@@ -21,10 +20,13 @@ const HomePage = () => {
 
   // Notifications state 
   const [homepageNotifications, setHomepageNotifications] = useState([]);
+  const [historyNotifications, setHistoryNotifications] = useState([]);           // A) history list
   const [showNotifDropdown, setShowNotifDropdown] = useState(false);
+  const [showHistory, setShowHistory] = useState(false);                           // B) toggle history vs recent
 
   // State for Message alert unread count
   const [unreadCount, setUnreadCount] = useState(0);
+  //const navigate = useNavigate();
 
   // 1. Fetch user profile if token is present
   useEffect(() => {
@@ -39,16 +41,15 @@ const HomePage = () => {
     }
   }, []);
 
-  // 2. Fetch notifications for this user 
+  // A) Recent notifications — when dropdown opens and not in history
   useEffect(() => {
-    if (!user) return;
+    if (!showNotifDropdown || showHistory || !user) return;
     const token = localStorage.getItem("token");
     axios
       .get("http://localhost:8080/api/notifications", {
         headers: { Authorization: token },
       })
       .then((res) => {
-        // Only notifications for which receiverId = user._id
         const filtered = res.data.filter(
           (notif) => String(notif.receiverId) === String(user._id)
         );
@@ -57,32 +58,47 @@ const HomePage = () => {
       .catch((err) =>
         console.error("Error fetching homepage notifications:", err)
       );
-  }, [user]);
+  }, [showNotifDropdown, showHistory, user]);
 
-  // 3. Poll notifications every 10 seconds 
+  // B) History — only when View All clicked
+  useEffect(() => {
+    if (!showHistory || !user) return;
+    const token = localStorage.getItem("token");
+    axios
+      .get("http://localhost:8080/api/notifications/history", {
+        headers: { Authorization: token },
+      })
+      .then((res) => setHistoryNotifications(res.data))
+      .catch((err) =>
+        console.error("Error fetching notification history:", err)
+      );
+  }, [showHistory, user]);
+
+  // 3. Poll recent notifications every 10 seconds (if dropdown open & not in history)
   useEffect(() => {
     if (!user) return;
-    const token = localStorage.getItem("token");
-    const fetchNotifications = () => {
-      axios
-        .get("http://localhost:8080/api/notifications", {
-          headers: { Authorization: token },
-        })
-        .then((res) => {
-          const filtered = res.data.filter(
-            (notif) => String(notif.receiverId) === String(user._id)
+    const intervalId = setInterval(() => {
+      if (showNotifDropdown && !showHistory) {
+        const token = localStorage.getItem("token");
+        axios
+          .get("http://localhost:8080/api/notifications", {
+            headers: { Authorization: token },
+          })
+          .then((res) => {
+            const filtered = res.data.filter(
+              (notif) => String(notif.receiverId) === String(user._id)
+            );
+            setHomepageNotifications(filtered);
+          })
+          .catch((err) =>
+            console.error("Error polling homepage notifications:", err)
           );
-          setHomepageNotifications(filtered);
-        })
-        .catch((err) =>
-          console.error("Error polling homepage notifications:", err)
-        );
-    };
-    const intervalId = setInterval(fetchNotifications, 10000);
+      }
+    }, 10000);
     return () => clearInterval(intervalId);
-  }, [user]);
+  }, [user, showNotifDropdown, showHistory]);
 
-  // 4. Poll global unread message count for the "Message" alert every 10 seconds
+  // 4. Poll global unread message count every 10 seconds
   useEffect(() => {
     const token = localStorage.getItem("token");
     if (!token) return;
@@ -105,7 +121,13 @@ const HomePage = () => {
 
   // Toggle notification dropdown for custom notification icon
   const toggleNotifDropdown = () => {
-    setShowNotifDropdown((prev) => !prev);
+    setShowNotifDropdown((prev) => {
+      if (prev) {
+        // closing → reset to recent
+        setShowHistory(false);
+      }
+      return !prev;
+    });
   };
 
   // Accept/Reject handlers for notifications 
@@ -159,7 +181,7 @@ const HomePage = () => {
             </Link>
           </div>
 
-          {/*  Nav Buttons, Message Alert, Notification Icon, and Auth/Profile */}
+          {/* Nav Buttons, Message Alert, Notification Icon, and Auth/Profile */}
           <div className="navbar-right">
             <div className="nav-buttons">
               <Link to="/start-trip">
@@ -179,7 +201,7 @@ const HomePage = () => {
               </Link>
             </div>
 
-            {/* Custom Notification Icon - show only if user is logged in */}
+            {/* Custom Notification Icon */}
             {user && (
               <div
                 className="homepage-notif-container"
@@ -198,52 +220,107 @@ const HomePage = () => {
                 )}
                 {showNotifDropdown && (
                   <div className="notification-dropdown">
-                    <div className="notification-dropdown-header">
-                      <h4>Notifications</h4>
-                    </div>
-                    {homepageNotifications.length === 0 ? (
-                      <p style={{ padding: "10px", color: "black" }}>
-                        No notifications
-                      </p>
-                    ) : (
-                      homepageNotifications.map((notif) => (
-                        <div key={notif._id} className="notification-item">
-                          <p>
-                          <Link
-                          to={`/profile/${notif.senderId}`}
-                          className="notif-sender"
-                          >
-                           {notif.senderName}
-                          </Link>{" "}
-                          wants to connect with you
-                          </p> 
-                          {notif.type === "connectRequest" &&
-                            notif.status === "pending" && (
-                              <div className="notification-actions">
-                                <button
-                                  onClick={() =>
-                                    handleAccept(notif._id, notif.senderName)
-                                  }
-                                >
-                                  Accept
-                                </button>
-                                <button
-                                  onClick={() =>
-                                    handleReject(notif._id, notif.senderName)
-                                  }
-                                >
-                                  Reject
-                                </button>
-                              </div>
-                            )}
+                    {showHistory ? (
+                      <>
+                        <div className="notification-dropdown-header">
+                          <h4>Notification History</h4>
                         </div>
-                      ))
+                        {historyNotifications.length === 0 ? (
+                          <p style={{ padding: "10px", color: "black" }}>
+                            No notifications in history
+                          </p>
+                        ) : (
+                          historyNotifications.map((n) => (
+                            <div key={n._id} className="notification-item">
+                              <p>{n.message}</p>
+                              <small>Status: {n.status}</small>
+                            </div>
+                          ))
+                        )}
+                        <div className="notification-dropdown-footer">
+                          <button
+                            className="view-all-btn"
+                            onClick={(e) => {
+                              e.stopPropagation();
+                               setShowHistory(false);
+                            }}
+                          >
+                            Back to Recent
+                          </button>
+                        </div>
+                      </>
+                    ) : (
+                      <>
+                        <div className="notification-dropdown-header">
+                          <h4>Notifications</h4>
+                        </div>
+                        {homepageNotifications.length === 0 ? (
+                          <p style={{ padding: "10px", color: "black" }}>
+                            No notifications
+                          </p>
+                        ) : (
+                          homepageNotifications.map((notif) => (
+                            <div key={notif._id} className="notification-item">
+                              <p>
+                                <Link
+                                  to={`/profile/${notif.senderId}`}
+                                  className="notif-sender"
+                                >
+                                  {notif.senderName}
+                                </Link>{" "}
+                                wants to connect with you
+                              </p>
+                              {notif.type === "connectRequest" &&
+                                notif.status === "pending" && (
+                                  <div className="notification-actions">
+                                    <button
+                                      onClick={() =>
+                                        handleAccept(
+                                          notif._id,
+                                          notif.senderName
+                                        )
+                                      }
+                                    >
+                                      Accept
+                                    </button>
+                                    <button
+                                      onClick={() =>
+                                        handleReject(
+                                          notif._id,
+                                          notif.senderName
+                                        )
+                                      }
+                                    >
+                                      Reject
+                                    </button>
+                                  </div>
+                                )}
+                            </div>
+                          ))
+                        )}
+                        <div className="notification-dropdown-footer">
+                          <button
+                            className="view-all-btn"
+                            onClick={ async(e) => {
+                              e.stopPropagation();
+                              try {
+                                const token = localStorage.getItem("token");
+                                const { data } = await axios.get(
+                                  "http://localhost:8080/api/notifications/history",
+                                    { headers: { Authorization: token } }
+                                );
+                                setHistoryNotifications(data);
+                                setShowHistory(true);
+                                } catch (err) {
+                                  console.error("Could not load notification history:", err);
+                                }
+                            }}
+                          >
+                            View All Notifications
+                          </button>
+                        </div>
+                      </>
                     )}
-                    <div className="notification-dropdown-footer">
-                      <button className="view-all-btn">
-                        View All Notifications
-                      </button>
-                    </div>
                   </div>
                 )}
               </div>
@@ -253,12 +330,11 @@ const HomePage = () => {
             {user ? (
               <Link to="/profile">
                 <img
-                src={
-                  user.profilePhoto.startsWith("http")
-                    ? user.profilePhoto
-                    : `http://localhost:8080/${user.profilePhoto}`
-                }
-                  //src={`http://localhost:8080/${user.profilePhoto}`}
+                  src={
+                    user.profilePhoto.startsWith("http")
+                      ? user.profilePhoto
+                      : `http://localhost:8080/${user.profilePhoto}`
+                  }
                   alt="Profile"
                   className="profile-pic"
                 />

@@ -313,3 +313,123 @@
   border: 1px solid #2C3C30;
   height: 75px;
 }
+
+body.dark-theme {
+  background-color: #2C3C30;
+  color: #BFB4A0;
+  font-family: Arial, sans-serif;
+}
+
+body.dark-theme .start-trip-page {
+  background-color: #2C3C30;
+  color: #BFB4A0;
+}
+
+body.dark-theme .start-trip-content {
+  background: none;
+  color: #BFB4A0;
+}
+
+body.dark-theme .trip-type-title,
+body.dark-theme .trip-type-option p,
+body.dark-theme .form-group label,
+body.dark-theme .date-group .date-inputs span,
+body.dark-theme .start-trip-form h3,
+body.dark-theme .selected-location,
+body.dark-theme .osm-autocomplete-suggestions li {
+  color: #BFB4A0;
+}
+
+body.dark-theme .trip-type-option {
+  background-color: #374B3C;
+  border-color: transparent;
+  color: #BFB4A0;
+}
+
+body.dark-theme .trip-type-option.active,
+body.dark-theme .trip-type-option:hover {
+  border-color: #BFB4A0;
+}
+
+body.dark-theme .icon-input {
+  background-color: #4A604D;
+}
+
+body.dark-theme .icon-block {
+  background-color: #2C3C30;
+}
+
+body.dark-theme .icon-input input,
+body.dark-theme .form-group .plain-input,
+body.dark-theme .form-group .plain-textarea {
+  background-color: #374B3C;
+  color: #BFB4A0;
+  border: none;
+}
+
+body.dark-theme .osm-autocomplete-suggestions {
+  background: #374B3C;
+  border: 1px solid #2C3C30;
+  color: #BFB4A0;
+}
+
+body.dark-theme .start-trip-button {
+  background-color: #BFB4A0;
+  color: #2C3C30;
+}
+
+body.dark-theme .start-trip-button:hover {
+  background-color: #A8A08C;
+}
+
+/* Modal */
+body.dark-theme .location-modal {
+  background-color: #374B3C;
+  border: 2px solid #BFB4A0;
+  border-radius: 12px;
+  padding: 2rem;
+  max-width: 400px;
+  text-align: center;
+  color: #E7E4DB;
+  box-shadow: 0 0 15px rgba(0,0,0,0.7);
+}
+
+body.dark-theme .location-modal h2 {
+  color: #BFB4A0;
+  font-weight: 700;
+  margin-bottom: 1rem;
+}
+
+body.dark-theme .location-modal p {
+  color: #DAD4C8;
+  margin-bottom: 1.5rem;
+  font-size: 1rem;
+  line-height: 1.4;
+}
+
+body.dark-theme .modal-buttons button {
+  border-radius: 6px;
+  padding: 0.75rem 1.5rem;
+  font-size: 1rem;
+  font-weight: 700;
+  cursor: pointer;
+  border: none;
+  transition: background-color 0.3s ease;
+}
+
+body.dark-theme .yes-button {
+  background-color: #A8A08C;
+  color: #2C3C30;
+  margin-right: 1rem;
+}
+body.dark-theme .yes-button:hover {
+  background-color: #BFB4A0;
+}
+
+body.dark-theme .no-button {
+  background-color: #2C3C30;
+  color: #BFB4A0;
+}
+body.dark-theme .no-button:hover {
+  background-color: #28352A;
+}

@@ -127,7 +127,20 @@ router.get("/trip-plans/:id", auth, async (req, res) => {
       .findById(req.params.id)
       .populate("user", "fullName profilePhoto");
     if (!plan) return res.status(404).json({ msg: "Trip not found" });
-    res.json(plan);
+
+    // Convert Mongoose doc to plain object so we can safely modify
+    const planObj = plan.toObject();
+
+    // Fix tripName and destination to be strings, fallback if they are objects
+    planObj.tripName = typeof planObj.tripName === "string"
+      ? planObj.tripName
+      : planObj.tripName?.name || "Unknown trip";
+
+    planObj.destination = typeof planObj.destination === "string"
+      ? planObj.destination
+      : planObj.destination?.city || "Unknown destination";
+
+    res.json(planObj);
   } catch (err) {
     console.error("Error fetching trip‑plan by id:", err);
     res.status(500).json({ msg: "Server error" });

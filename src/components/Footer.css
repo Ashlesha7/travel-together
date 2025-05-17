@@ -25,3 +25,21 @@ footer {
     font-size: 16px;
   }
   
+  body.dark-theme footer {
+  background-color: #28352A; /* Dark green, matching navbar */
+  color: #BFB4A0;            /* Light tan text */
+  border-top: 1px solid #566953; /* subtle border for separation */
+}
+
+body.dark-theme .footer-logo {
+  filter: brightness(0.8); /* slightly dim logo if it’s an image */
+}
+
+body.dark-theme .footer-links a {
+  color: #BFB4A0;           /* Light tan for links */
+  transition: color 0.3s;
+}
+
+body.dark-theme .footer-links a:hover {
+  color: #EAE7DC;           /* Lighter tan on hover */
+}

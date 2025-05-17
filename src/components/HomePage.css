@@ -396,3 +396,112 @@ footer {
   font-weight: bold;
   margin-left: 5px;
 }
+
+body.dark-theme {
+  background: #2C3C30; /* dark page background */
+  color: #BFB4A0;      /* tan text color */
+}
+
+body.dark-theme .homepage {
+  background: #2C3C30;
+}
+
+body.dark-theme .hero-section {
+  color: #DAD4C8;
+  text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+}
+
+/* Navbar remains transparent, no background */
+body.dark-theme .navbar {
+  background: transparent;
+  color: #BFB4A0;
+}
+
+/* Nav buttons with transparent background and tan text */
+body.dark-theme .nav-buttons button {
+  background: transparent;
+  color: #BFB4A0;
+  border: none;
+  cursor: pointer;
+  font-size: 16px;
+  min-width: 140px;
+  padding: 10px 20px;
+  border-radius: 20px;
+  transition: color 0.3s ease, transform 0.3s ease;
+}
+
+/* Hover: lighter tan and scale */
+body.dark-theme .nav-buttons button:hover {
+  color: #E7E4DB;
+  transform: scale(1.05);
+}
+
+/* Auth buttons: transparent background, tan text */
+body.dark-theme .auth-buttons,
+body.dark-theme .login-signup-button {
+  background: transparent;
+  color: #BFB4A0;
+  border-radius: 20px;
+  padding: 10px 20px;
+  border: none;
+  cursor: pointer;
+  transition: color 0.3s ease;
+}
+
+body.dark-theme .login-signup-button:hover {
+  color: #E7E4DB;
+}
+
+/* Profile pic border to stand out */
+body.dark-theme .profile-pic {
+  border: 2px solid #BFB4A0;
+}
+
+/* Destinations section background */
+body.dark-theme .destinations {
+  background: #2C3C30;
+  color: #BFB4A0;
+}
+
+/* Destination cards: darker background, tan text */
+body.dark-theme .destination-card {
+  background: #374B3C;
+  color: #BFB4A0;
+  box-shadow: none;
+  border-radius: 30px;
+  transition: transform 0.3s ease-in-out;
+}
+
+body.dark-theme .destination-card:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 15px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .destination-card h3,
+body.dark-theme .destination-card p {
+  color: #BFB4A0;
+}
+
+/* Footer background and text */
+body.dark-theme footer {
+  background: #2C3C30;
+  color: #BFB4A0;
+}
+
+/* Footer links tan text */
+body.dark-theme .footer-links a {
+  color: #BFB4A0;
+}
+
+/* View All button */
+body.dark-theme .view-all {
+  background-color: #BFB4A0;
+  color: #2C3C30;
+  border: none;
+  transition: background 0.3s ease;
+}
+
+body.dark-theme .view-all:hover {
+  background-color: #A8A08C;
+}
+

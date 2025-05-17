@@ -140,13 +140,9 @@ export default function Profile() {
   const handleLogout = () => {
     localStorage.removeItem("token");
     localStorage.removeItem("user");
+    document.body.classList.remove("dark-theme");
     setUser(null);
     window.location.href = "/";
-  };
-
-  // Theme toggle placeholder
-  const handleThemeToggle = () => {
-    alert("Dark/Light mode");
   };
 
   // 5) About Me
@@ -231,6 +227,7 @@ export default function Profile() {
       console.error("Error saving Bio:", error);
     }
   };
+  
 
   // 7) Citizenship Number
   const handleCNumberEdit = () => {
@@ -384,23 +381,43 @@ export default function Profile() {
       {showSettings && (
         <div className="settings-modal">
           <div className="settings-modal-content">
+             <button
+              className="modal-close-x"
+              onClick={() => setShowSettings(false)}
+              aria-label="Close settings"
+            >
+              x
+            </button>
             <h2>Settings</h2>
             <div className="settings-list">
               <div className="settings-item">
                 <span>Theme</span>
-                <button onClick={handleThemeToggle}>Toggle Theme</button>
+                <div className="theme-buttons">
+                  <button
+                  onClick={() => {
+                    localStorage.setItem("theme", "light");
+                    document.body.classList.remove("dark-theme");
+                     }}
+                     disabled={!document.body.classList.contains("dark-theme")} // Disable if already light
+                  >
+                    Light 
+                  </button>
+                  <button
+                    onClick={() => {
+                      localStorage.setItem("theme", "dark");
+                      document.body.classList.add("dark-theme");
+                    }}
+                    disabled={document.body.classList.contains("dark-theme")} // Disable if already dark
+                  >
+                    Dark 
+                  </button>
+                </div>
               </div>
               <div className="settings-item">
                 <span>Logout</span>
                 <button onClick={handleLogout}>Logout</button>
               </div>
             </div>
-            <button
-              className="close-modal-btn"
-              onClick={() => setShowSettings(false)}
-            >
-              Close
-            </button>
           </div>
         </div>
       )}
@@ -686,7 +703,7 @@ export default function Profile() {
           </div>
         </div>
       )}
-      <div className="info-container">
+      <div className="info-container reviews-container">
         <hr />
         <div className="profile-info-section">
            <h2>Reviews</h2>
@@ -712,9 +729,6 @@ export default function Profile() {
       ) : (
         <ProfilePublic userId={id} />
       )}
-       {/* Reviews & Ratings */}
-{/* Reviews & Ratings */}
-
       <Footer />
     </div> 
   );

@@ -1,14 +1,11 @@
-/* 
-   1) We do NOT style html or body here.
-   2) Instead, we scope all rules under .profile-page
-*/
+
 
 /* Minimal reset inside .profile-page only */
-.profile-page * {
+/* .profile-page * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-}
+} */
 
 /* The main container for the Profile page */
 .profile-page {
@@ -20,9 +17,7 @@
   flex-direction: column;
 }
 
-/********************************************
- * Full-Width Cover Section
- ********************************************/
+ /* Full-Width Cover Section*/
 .profile-page .fullwidth-cover {
   width: 100vw;
   height: 60vh; 
@@ -83,17 +78,13 @@
   background-color: #A8A08C;
 }
 
-/********************************************
- * Main Profile Content (below cover)
- ********************************************/
+ /* Main Profile Content (below cover)*/
 .profile-page .profile-main {
   width: 100%;
   padding: 2rem;
   background-color: #E7E4DB;
-  
 }
 
-/* Keep the circle & username exactly as is */
 .profile-page .profile-header {
   display: flex;
   align-items: center;
@@ -147,21 +138,19 @@
   color: #2C3C30;
 }
 
-/********************************************
- * info-container: center all sections
- ********************************************/
+ /* info-container: center all sections*/
 .info-container {
   max-width: 800px;
-  margin: 8rem auto 0; /* adjust as needed */
+  margin: 8rem auto 0; 
 }
 
-/********************************************
- * Common style for each "section"
- ********************************************/
+/* Card-style wrapper for each section */
 .profile-page .profile-info-section {
-  margin-top: 2rem;
-  font-size: 1rem;
-  color: #333;
+  background: #fff;
+  padding: 1.5rem;
+  border-radius: 8px;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.1);
+  margin-bottom: 2rem;
 }
 
 .profile-page .section-header {
@@ -172,7 +161,7 @@
 }
 
 .profile-page .section-header h2 {
-  display: inline-block;       /* So width adjusts to the text content */
+  display: inline-block;      
   white-space: nowrap; 
   background-color: #2C3C30; 
   color: #BFB4A0;
@@ -183,17 +172,16 @@
   margin: 0;
 }
 
-/* "Edit" or "Add" button, smaller, dark green pill */
+/* "Edit" or "Add" button */
 .profile-page .edit-btn {
-  margin-left: 40rem;
-  background-color: #2C3C30; 
+  margin: 0;
+  flex: 0;         
+  background-color: #2C3C30;
   color: #BFB4A0;
-  border: none;
-  border-radius: 20px;
-  padding: 0.5rem 1rem;
-  cursor: pointer;
+  padding: 0.3rem 0.8rem;
   font-size: 0.9rem;
   font-weight: 600;
+  transition: background-color 0.2s;
 }
 .profile-page .edit-btn:hover {
   background-color: #28352A;
@@ -203,6 +191,7 @@
 
 .profile-page .section-content p {
   margin: 0.3rem 0;
+  line-height: 1.4;
 }
 
 /* Thumbnail styling for citizenship photo */
@@ -214,18 +203,11 @@
   border: 1px solid #ccc;
 }
 
-/********************************************
- * Horizontal Rule
- ********************************************/
 .profile-page hr {
-  border: none;
-  border-top: 1px solid #aaa;
-  margin: 1.5rem 0;
+  display: none;
 }
 
-/********************************************
- * Modal (Pop-Up) for Editing
- ********************************************/
+ /* Modal (Pop-Up) for Editing*/
 .profile-page .edit-modal {
   position: fixed;
   top: 0;
@@ -288,29 +270,26 @@
   background-color: #28352A;
 }
 
-/********************************************
- * Settings Modal & Button Styles
- ********************************************/
 
-/* Container for the Settings button – positioned with some left margin */
+/* Container for the Settings button */
 .settings-container {
   margin-top: 1rem;
-  margin-right: 2rem;  /* Move the button away from the extreme right edge */
-  text-align: right;   /* Aligns the Settings button to the right */
+  margin-right: 2rem;
+  text-align: right;   
 }
 
-/* The Settings button (matches the Upload button style) */
+/* The Settings button */
 .settings-button {
-  background-color: #28352A;  /* same as upload button */
+  background-color: #28352A;  
   color: #BFB4A0;
   border: none;
-  border-radius: 20px;        /* pill shape */
+  border-radius: 20px;        
   padding: 0.5rem 1rem;
   cursor: pointer;
   font-size: 0.9rem;
-  white-space: nowrap;        /* prevents text from wrapping */
-  width: auto;                /* only as wide as content requires */
-  max-width: 150px;           /* limit width if necessary */
+  white-space: nowrap;     
+  width: auto;                
+  max-width: 150px;           
 }
 
 .settings-button:hover {
@@ -324,11 +303,11 @@
   left: 0;
   width: 100%;
   height: 100%;
-  background-color: rgba(0, 0, 0, 0.5); /* translucent dark background */
+  background-color: rgba(0, 0, 0, 0.5); 
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 9999; /* ensure it's above everything */
+  z-index: 9999; 
 }
 
 /* The white box in the center */
@@ -340,6 +319,7 @@
   padding: 2rem 1.5rem;
   box-shadow: 0 2px 8px rgba(0,0,0,0.2);
   text-align: center;
+  position: relative; 
 }
 
 /* The title at the top */
@@ -355,25 +335,24 @@
 .settings-list {
   display: flex;
   flex-direction: column;
-  gap: 1rem;      /* spacing between items */
+  gap: 1rem;      
   margin-bottom: 1rem;
 }
 
-/* Each item row: label on the left, button on the right */
+/* Each item row */
 .settings-item {
   display: flex;
   justify-content: space-between;
   align-items: center;
 }
 
-/* The label for each setting (e.g. "Theme", "Logout") */
+/* The label for each setting  */
 .settings-item span {
   font-size: 0.95rem;
   font-weight: 500;
   color: #333;
 }
 
-/* The small button on the right (same style for "Toggle" & "Logout") */
 .settings-item button {
   background-color: #2C3C30;
   color: #BFB4A0;
@@ -390,26 +369,30 @@
 }
 
 /* Close button at the bottom */
-.close-modal-btn {
-  margin: 0 auto;          /* center horizontally */
-  background-color: #ccc;
-  color: #333;
+.modal-close-x {
+  position: absolute;
+  top: 0.5rem;
+  right: 0.5rem;
+  background-color: #ffff;
   border: none;
-  border-radius: 20px;
-  padding: 0.5rem 1.2rem;
+  font-size: 1.2rem;
+  line-height: 1;
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
   cursor: pointer;
-  font-size: 0.8rem;
-  display: block;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 .close-modal-btn:hover {
   background-color: #bbb;
 }
 
-
 .incomplete-profile-banner {
-  background-color: #fff3cd; /* Light yellow background */
-  border: 1px solid #ffeeba; /* Slightly darker yellow border */
-  color: #856404;            /* Dark gold text */
+  background-color: #fff3cd; 
+  border: 1px solid #ffeeba; 
+  color: #856404;           
   padding: 12px 16px;
   margin: 16px 0;
   border-radius: 4px;
@@ -424,4 +407,121 @@
 .review-meta       { color: #666; font-size: 0.8rem; }
 .review-comment {
   word-break: break-word;   
+}
+.reviews-container {
+  margin-top: 2rem;   
+}
+
+.theme-buttons {
+  display: flex !important;
+  gap: 8px;
+  align-items: center;
+}
+
+.theme-buttons button {
+  padding: 6px 14px;
+  font-size: 0.85rem;
+  border-radius: 12px;
+  border: none;
+  background-color: #2C3C30;
+  color: #BFB4A0;
+  font-weight: 600;
+  cursor: pointer;
+  min-width: 100px;
+  white-space: nowrap;
+  transition: background-color 0.3s ease;
+  width: auto !important;
+  display: inline-flex !important;
+}
+
+.theme-buttons button:hover:not(:disabled) {
+  background-color: #3B523E;
+}
+
+.theme-buttons button:disabled {
+  background-color: #566953;
+  cursor: not-allowed;
+  color: #9FAF8E;
+}
+
+/* Dark-mode overrides */
+
+/* page background & text */
+body.dark-theme .profile-page {
+  background-color: #2C3C30;
+  color: #BFB4A0;
+}
+/* cover section */
+body.dark-theme .profile-page .fullwidth-cover {
+  background-color: #374B3C;
+}
+body.dark-theme .profile-page .cover-placeholder {
+  background-color: #566953;
+  color: #E7E4DB;
+}
+body.dark-theme .profile-page .cover-upload-label,
+body.dark-theme .profile-page .cover-upload-controls button {
+  background-color: #566953;
+  color: #E7E4DB;
+}
+
+/* main content background */
+body.dark-theme .profile-page .profile-main {
+  background-color: #2C3C30;
+}
+
+body.dark-theme .profile-page .profile-info-section {
+  background-color: #374B3C;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.5);
+}
+
+body.dark-theme .profile-page .profile-info-section .section-header h2 {
+  background-color: #566953;
+  color: #E7E4DB;
+}
+body.dark-theme .profile-page .profile-info-section .edit-btn {
+  background-color: #566953;
+  color: #E7E4DB;
+}
+body.dark-theme .profile-page .profile-info-section .edit-btn:hover {
+  background-color: #3B523E;
+}
+
+body.dark-theme .profile-page .profile-info-section .section-content p {
+  color: #BFB4A0;
+  line-height: 1.5;
+}
+
+body.dark-theme .profile-page .profile-username {
+  color: #BFB4A0;
+}
+
+body.dark-theme .profile-page .modal-content,
+body.dark-theme .profile-page .settings-modal-content {
+  background-color: #374B3C;
+  color: #BFB4A0;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.8);
+}
+body.dark-theme .profile-page .modal-content input,
+body.dark-theme .profile-page .modal-content textarea,
+body.dark-theme .profile-page .modal-content select {
+  background-color: #566953;
+  color: #E7E4DB;
+  border: 1px solid #424C33;
+}
+body.dark-theme .profile-page .modal-buttons button,
+body.dark-theme .profile-page .settings-item button,
+body.dark-theme .profile-page .close-modal-btn {
+  background-color: #566953;
+  color: #E7E4DB;
+}
+body.dark-theme .profile-page .modal-buttons button:hover,
+body.dark-theme .profile-page .settings-item button:hover,
+body.dark-theme .profile-page .close-modal-btn:hover {
+  background-color: #3B523E;
+}
+body.dark-theme .settings-modal-content h2,
+body.dark-theme .settings-item span,
+body.dark-theme .settings-item button {
+  color: #EAE7DC;
 }

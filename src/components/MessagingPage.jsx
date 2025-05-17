@@ -754,14 +754,22 @@ useEffect(() => {
                 {/* Trip name header */}
                 {tripDetail && (
                   <h3 className="review-form-trip">
-                    Reviewing your trip to <em>{tripDetail.destination}</em>
+                    Reviewing your trip to <em>
+                       {typeof tripDetail.destination === "string"
+                        ? tripDetail.destination
+                        : JSON.stringify(tripDetail.destination)}
+                    </em>
                   </h3>
                 )}
                 <ReviewForm
                   tripId={activeConv.tripId}
                   revieweeId={activeConv.userId}
                   reviewerId={userId}
-                   tripName={tripDetail?.tripName || tripDetail?.destination}
+                   tripName={
+                    typeof tripDetail?.tripName === "string"
+                    ? tripDetail.tripName
+                    : JSON.stringify(tripDetail?.tripName) || (typeof tripDetail?.destination === "string" ? tripDetail.destination : "")
+                  }
                   onSubmitted={() => {
                     setShowReview(false);
                     // reload just this trip's reviews

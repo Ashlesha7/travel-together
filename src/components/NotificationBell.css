@@ -146,3 +146,81 @@
   background: #fff8e1;           /* pale yellow */
   border-left: 4px solid #f5b50a;
 }
+
+body.dark-theme .notification-icon {
+  color: #BFB4A0;
+  transition: color 0.3s;
+}
+
+body.dark-theme .notification-icon:hover {
+  color: #EAE7DC;
+}
+
+body.dark-theme .notification-icon .badge {
+  background: #e55353;
+  box-shadow: 0 0 6px rgba(229,83,83,0.7);
+  border: none;
+}
+
+body.dark-theme .notification-dropdown {
+  background: #2C3C30;
+  color: #DAD4C8;
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.8);
+  padding: 0.5rem 0;
+  border: none;  /* Remove border */
+}
+
+body.dark-theme .notification-dropdown-header,
+body.dark-theme .notification-dropdown-footer {
+  background: #374B3C;
+  color: #BFB4A0;
+  padding: 0.5rem 1rem;
+  border-radius: 8px 8px 0 0;
+  border: none;  /* Remove border */
+}
+
+body.dark-theme .notification-item {
+  background: #374B3C;
+  margin: 0.4rem 1rem;
+  padding: 0.7rem 1rem;
+  border-radius: 6px;
+  color: #C9D1B1;
+  transition: background 0.25s;
+  border: none;  /* Remove border */
+}
+
+body.dark-theme .notification-item:hover {
+  background: #465A44;
+}
+
+body.dark-theme .notification-actions button {
+  background: #BFB4A0;
+  color: #2C3C30;
+  border-radius: 6px;
+  padding: 0.4rem 0.9rem;
+  cursor: pointer;
+  border: 1.5px solid #2C3C30; /* Border only on buttons */
+  transition: background 0.3s;
+}
+
+body.dark-theme .notification-actions button:hover {
+  background: #A8A08C;
+  border-color: #28352A;
+}
+
+body.dark-theme .view-all-btn {
+  background: #BFB4A0;
+  color: #2C3C30;
+  padding: 0.5rem 1rem;
+  border-radius: 6px;
+  font-weight: 600;
+  cursor: pointer;
+  border: 1.5px solid #2C3C30; /* Border only on buttons */
+  transition: background 0.3s;
+}
+
+body.dark-theme .view-all-btn:hover {
+  background: #A8A08C;
+  border-color: #28352A;
+}

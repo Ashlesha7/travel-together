@@ -104,3 +104,58 @@
   margin-bottom: 0.5rem;
   color: #333;
 }
+body.dark-theme .review-form {
+  background: #374B3C;
+  color: #BFB4A0;
+  box-shadow: 0 0 10px rgba(0,0,0,0.7);
+}
+
+body.dark-theme .review-form__title,
+body.dark-theme .rating-value,
+body.dark-theme .review-form-trip {
+  color: #BFB4A0;
+}
+
+body.dark-theme .star-btn.filled {
+  color: #FFC107;
+  text-shadow: 0 0 4px rgba(255, 193, 7, 0.7);
+}
+
+body.dark-theme .star-btn.empty {
+  color: #566953;
+}
+
+body.dark-theme .comment-box label {
+  color: #BFB4A0;
+}
+
+body.dark-theme .comment-box textarea {
+  background-color: #2C3C30;
+  color: #BFB4A0;
+  border: 1px solid #566953;
+  resize: vertical;
+}
+
+body.dark-theme .comment-box textarea::placeholder {
+  color: #9FAF8E;
+}
+
+body.dark-theme .error-message {
+  color: #F87171; /* softer red for dark */
+}
+
+body.dark-theme .submit-btn {
+  background: #A8A08C;
+  color: #2C3C30;
+  border: none;
+  box-shadow: none;
+}
+
+body.dark-theme .submit-btn:hover:not(:disabled) {
+  background: #BFB4A0;
+}
+
+body.dark-theme .submit-btn:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}

@@ -276,3 +276,132 @@
   text-decoration: underline;
 }
 
+body.dark-theme .messaging-container {
+  background-color: #2C3C30;
+}
+
+body.dark-theme .left-sidebar {
+  background-color: #374B3C;
+  border-color: #566953;
+  color: #BFB4A0;
+}
+
+body.dark-theme .sidebar-title,
+body.dark-theme .conversation-name,
+body.dark-theme .conversation-item {
+  color: #BFB4A0;
+}
+
+body.dark-theme .conversation-item:hover,
+body.dark-theme .conversation-item.active {
+  background-color: #566953;
+}
+
+body.dark-theme .chat-area {
+  background-color: #2C3C30;
+  color: #BFB4A0;
+}
+
+body.dark-theme .chat-header {
+  background-color: #374B3C;
+  border-color: #566953;
+  color: #BFB4A0;
+}
+
+body.dark-theme .chat-messages {
+  color: #BFB4A0;
+}
+
+body.dark-theme .message-bubble.sent {
+  background-color: #566953;
+  border-color: #9FAF8E;
+  color: #E7E4DB;
+}
+
+body.dark-theme .message-bubble.received {
+  background-color: #374B3C;
+  border-color: #566953;
+  color: #BFB4A0;
+}
+
+body.dark-theme .message-time {
+  color: #9FAF8E;
+}
+
+body.dark-theme .no-messages,
+body.dark-theme .no-conversation-selected {
+  color: #9FAF8E;
+}
+
+body.dark-theme .chat-input-section {
+  background-color: #566953;
+  border-color: #9FAF8E;
+}
+
+body.dark-theme .chat-input {
+  background-color: #374B3C;
+  color: #BFB4A0;
+  border: 1px solid #566953;
+}
+
+body.dark-theme .chat-input::placeholder {
+  color: #9FAF8E;
+}
+
+body.dark-theme .send-button {
+  background-color: #2C3C30;
+  color: #BFB4A0;
+}
+
+body.dark-theme .send-button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+body.dark-theme .send-button:hover:not(:disabled) {
+  background-color: #9FAF8E;
+  color: #2C3C30;
+}
+
+/* Reviews Section */
+body.dark-theme .reviews-section,
+body.dark-theme .review-card {
+  background-color: #374B3C;
+  color: #BFB4A0;
+  border-color: #566953;
+}
+
+body.dark-theme .review-card p {
+  color: #BFB4A0;
+}
+
+/* Modal for Reviews */
+body.dark-theme .review-modal-backdrop {
+  background: rgba(0,0,0,0.7);
+}
+
+body.dark-theme .review-modal {
+  background-color: #374B3C;
+  color: #BFB4A0;
+  border: 1px solid #566953;
+}
+
+body.dark-theme .close-modal {
+  color: #BFB4A0;
+}
+
+body.dark-theme .close-modal:hover {
+  color: #9FAF8E;
+}
+
+/* Links */
+body.dark-theme .leave-review-inline,
+body.dark-theme .view-profile-link {
+  color: #BFB4A0;
+}
+
+body.dark-theme .leave-review-inline:hover,
+body.dark-theme .view-profile-link:hover {
+  color: #9FAF8E;
+  text-decoration: underline;
+}
