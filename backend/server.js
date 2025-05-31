@@ -15,6 +15,9 @@ const conversationRoutes = require("./conversationRoutes");
 const Message = require("./messageModel");
 const Conversation = require("./conversationModel");
 const reviewRoutes = require("./reviewRoutes"); 
+const cron     = require("node-cron");
+const TripPlan = require("./tripPlanModel");  
+
 
 
 const adminRoutes = require('./admin/adminRoutes');
@@ -37,10 +40,26 @@ const io = socketio(server, {
   },
 });
 
+app.set("io", io);
+
 // Connect to MongoDB
 connectDB().catch((err) => {
   console.error("❌ Database connection failed:", err);
   process.exit(1);
+});
+
+// Auto-complete cron job to update trip status 
+cron.schedule("0 0 * * *", async () => {
+  try {
+    const now = new Date();
+    const result = await TripPlan.updateMany(
+      { status: { $ne: "completed" }, endDate: { $lte: now } },
+      { $set: { status: "completed" } }
+    );
+    console.log(`Auto-completed ${result.nModified} trip(s) at ${now}`);
+  } catch (error) {
+    console.error("Error auto-completing trips:", error);
+  }
 });
 
 // Ensure "uploads/" directory exists

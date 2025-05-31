@@ -358,7 +358,7 @@ const Discover = () => {
                       className="connect-button"
                       onClick={() => handleConnect(trip)}
                     >
-                      Connect
+                      {trip.status === "completed" ? "Connect" : "Connect"}
                     </button>
                     <button
                       className="details-button"
@@ -485,7 +485,7 @@ const Discover = () => {
             </div>
 
             {/* ──────────────  REVIEW  ────────────── */}
-            {canReview && new Date(selectedTrip.endDate) < new Date() && !reviewDone && (
+            {canReview && selectedTrip.status === "completed" && !reviewDone && (
               <ReviewForm
               tripId={selectedTrip._id}
               revieweeId={selectedTrip.user._id}

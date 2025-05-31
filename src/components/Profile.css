@@ -1,6 +1,6 @@
 
 
-/* Minimal reset inside .profile-page only */
+/*  .profile-page only */
 /* .profile-page * {
   margin: 0;
   padding: 0;
@@ -399,6 +399,8 @@
   text-align: center;
   font-size: 1rem;
   font-weight: 600;
+  position: relative;
+  z-index: 11;
 }
 
 .review-item       { margin-bottom: 1rem; }

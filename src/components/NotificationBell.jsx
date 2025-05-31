@@ -25,6 +25,9 @@ const NotificationBell = ({ user }) => {
           (notif) => String(notif.senderId) !== String(user._id)
         );
         setNotifications(filtered);
+        filtered
+        .filter((notif) => notif.type === "connectResponse" && notif.status === "pending")
+        .forEach((notif) => alert(notif.message));
       })
       .catch((err) =>
         console.error("Error fetching notifications:", err)

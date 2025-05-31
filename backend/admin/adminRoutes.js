@@ -8,6 +8,7 @@ const User = require("../userModel");
 const TripPlan = require("../tripPlanModel"); 
 const Notification = require("../notificationModel");
 const Review = require("../reviewModel");
+const Conversation = require("../conversationModel");
 
 const router = express.Router();
 const JWT_SECRET = process.env.JWT_SECRET || "apple123";
@@ -203,6 +204,17 @@ router.patch("/admin/trip-plans/:id/complete", verifyAdmin, async (req, res) => 
     if (!trip) return res.status(404).json({ msg: "Trip not found" });
     trip.status = "completed";
     await trip.save();
+
+     const io = req.app.get("io");
+     const convs = await Conversation.find({ tripPlanId: trip._id });
+     convs.forEach((conv) => {
+      if (String(conv.userId) !== String(trip.user)) {
+        io.to(conv._id.toString()).emit("tripCompleted", {
+           tripId: trip._id.toString(),
+           });
+      }
+       });
+       
     return res.status(200).json({ msg: "Trip marked as completed", trip });
   } catch (error) {
     console.error("Error marking trip as completed:", error);

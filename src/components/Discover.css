@@ -446,6 +446,16 @@
   color: #fff;
 }
 
+.advanced-filters input[type="date"],
+.advanced-filters select,
+.advanced-filters input[type="number"] {
+  flex: none;              
+  width: 160px;             
+  height: 2.5rem;           
+  padding: 0 0.75rem;      
+  box-sizing: border-box;  
+}
+
 body.dark-theme .discover-page {
   background-color: #2C3C30;
   color: #BFB4A0;

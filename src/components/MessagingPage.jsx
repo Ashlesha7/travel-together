@@ -499,6 +499,7 @@ const MessagingPage = ({ user }) => {
 
   // 1. Fetch or create conversation list
   useEffect(() => {
+    if (!user) return;
     const token = localStorage.getItem("token");
     axios
       .get("http://localhost:8080/api/conversations", {
@@ -516,7 +517,7 @@ const MessagingPage = ({ user }) => {
         }
       })
       .catch((err) => console.error("Error fetching conversations:", err));
-  }, [initialConversationId]);
+  }, [user, initialConversationId]);
 
   // 2. Fetch messages for the active conversation
   useEffect(() => {
@@ -538,9 +539,31 @@ const MessagingPage = ({ user }) => {
   useEffect(() => {
     if (activeConversationId && isValidObjectId(activeConversationId)) {
       socket.emit("joinConversation", activeConversationId);
-      console.log("Joined conversation room:", activeConversationId);
+      console.log("Joined conversation room:", activeConversationId);    
     }
   }, [activeConversationId]);
+
+  useEffect(() => {
+  if (!activeConv) return;
+  if (activeConv.tripStatus === "completed" && canReview) {
+    setShowReview(true);
+  }
+}, [activeConv, canReview]);
+
+  useEffect(() => {
+  if (!activeConv) return;
+  const handler = ({ tripId }) => {
+    // only react if it’s the same trip
+    if (String(activeConv.tripId) === tripId) {
+      setCanReview(true);
+      setShowReview(true);
+    }
+  };
+  socket.on("tripCompleted", handler);
+  return () => {
+    socket.off("tripCompleted", handler);
+  };
+}, [activeConv]);
 
   // 3a. load reviews once trip is completed
   useEffect(() => {
@@ -563,14 +586,32 @@ const MessagingPage = ({ user }) => {
 
   // decide if we can leave a review
   useEffect(() => {
+  // if nothing to work with yet, or not completed, we cannot review
+  if (
+    !activeConv ||
+    activeConv.tripStatus !== "completed" ||
+    !userId ||
+    !tripDetail
+  ) {
     setCanReview(false);
     setShowReview(false);
-    if (!activeConv || activeConv.tripStatus !== "completed" || !userId) return;
-    const already = reviews.some(
-      (r) => String(r.reviewerId._id) === String(userId)
-    );
-    setCanReview(!already);
-  }, [activeConv, reviews, userId]);
+    return;
+  }
+
+  // 1) don't let the trip's creator review their own trip
+  if (String(tripDetail.user._id) === String(userId)) {
+    setCanReview(false);
+    setShowReview(false);
+    return;
+  }
+
+  // 2) don't let anyone who already left a review do it again
+  const already = reviews.some(
+    r => String(r.reviewerId._id) === String(userId)
+  );
+  setCanReview(!already);
+  setShowReview(false);     // reset the accordion state if you're toggling back in/out
+}, [activeConv, reviews, userId, tripDetail]);
 
   // 3b. load the trip details so we know its name/destination
 useEffect(() => {
@@ -659,18 +700,38 @@ useEffect(() => {
     if (!otherUsername) return;
     const token = localStorage.getItem("token");
     axios
+    // Look up the other user by username
       .get(`http://localhost:8080/api/users?username=${otherUsername}`, {
         headers: { Authorization: token },
       })
       .then((uRes) => {
         const other = uRes.data;
-        if (!other?._id) return alert("User not found.");
-        return axios.post(
+          if (!other?._id) {
+            alert("User not found.");
+            throw new Error("No user");
+          }
+          // Check if the user is connected before messaging
+          return axios
+            .get(
+              `http://localhost:8080/api/notifications/connection-status?otherUserId=${other._id}`,
+              { headers: { Authorization: token } }
+            )
+            .then((statusRes) => {
+              if (!statusRes.data.connectionExists) {
+                alert("You must connect first before sending messages.");
+                throw new Error("Not connected");
+              }
+              return other;
+            });
+      })
+      // Find or create the conversation
+      .then((other) => 
+         axios.post(
           "http://localhost:8080/api/conversations/find-or-create",
           { otherUserId: other._id },
           { headers: { Authorization: token } }
-        );
-      })
+        )
+      )
       .then((cRes) => {
         const newConv = cRes.data;
         setConversations((prev) =>
@@ -680,7 +741,13 @@ useEffect(() => {
         );
         setActiveConversationId(newConv._id);
       })
-      .catch((e) => console.error(e));
+      .catch((e) => {
+        if (e.message === "No user" || e.message === "Not connected") {
+          return;
+        }
+        console.error("Error creating conversation:", e);
+        alert("Could not start a conversation. Try again.");
+      });
   };
 
   // — dedupe sidebar by userId

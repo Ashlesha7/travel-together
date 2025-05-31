@@ -29,7 +29,10 @@ router.post("/", async (req, res) => {
       if (!trip) {
         return res.status(404).json({ message: "Trip not found" });
       }
-      if (new Date(trip.endDate) > new Date()) {
+      if (
+        trip.status !== "completed" && // admin did not auto-complete
+        new Date(trip.endDate) > new Date() // trip not ended yet
+      ) {
         return res.status(400).json({ message: "Trip has not completed yet" });
       }
     }

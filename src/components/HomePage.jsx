@@ -4,7 +4,6 @@ import axios from "axios";
 import "./HomePage.css";
 
 import headerLogo from "../assets/logo.png";
-import footerLogo from "../assets/footerlogo.png";
 
 // Background & destination images
 import bgHome from "../assets/Background.jpg";
@@ -14,6 +13,7 @@ import mustang from "../assets/mustang.jpg";
 import langtang from "../assets/langtang.jpg";
 
 import notificationIcon from "../assets/notification.png";
+import Footer from "./Footer";
 
 const HomePage = () => {
   const [user, setUser] = useState(null);
@@ -54,6 +54,11 @@ const HomePage = () => {
           (notif) => String(notif.receiverId) === String(user._id)
         );
         setHomepageNotifications(filtered);
+        filtered
+        .filter((notif) => notif.type === "connectResponse" && notif.status === "pending")
+        .forEach((notif) => {
+          alert(notif.message);
+           });
       })
       .catch((err) =>
         console.error("Error fetching homepage notifications:", err)
@@ -74,29 +79,29 @@ const HomePage = () => {
       );
   }, [showHistory, user]);
 
-  // 3. Poll recent notifications every 10 seconds (if dropdown open & not in history)
-  useEffect(() => {
-    if (!user) return;
-    const intervalId = setInterval(() => {
-      if (showNotifDropdown && !showHistory) {
-        const token = localStorage.getItem("token");
-        axios
-          .get("http://localhost:8080/api/notifications", {
-            headers: { Authorization: token },
-          })
-          .then((res) => {
-            const filtered = res.data.filter(
-              (notif) => String(notif.receiverId) === String(user._id)
-            );
-            setHomepageNotifications(filtered);
-          })
-          .catch((err) =>
-            console.error("Error polling homepage notifications:", err)
-          );
-      }
-    }, 10000);
-    return () => clearInterval(intervalId);
-  }, [user, showNotifDropdown, showHistory]);
+  // 3. Poll notifications every 10 seconds (always, so badge updates even when dropdown is closed)
+useEffect(() => {
+  if (!user) return;
+  const token = localStorage.getItem("token");
+  const fetchNotifs = () => {
+    axios
+      .get("http://localhost:8080/api/notifications", {
+        headers: { Authorization: token },
+      })
+      .then((res) => {
+        const filtered = res.data.filter(
+          (notif) => String(notif.receiverId) === String(user._id)
+        );
+        setHomepageNotifications(filtered);
+      })
+      .catch((err) =>
+        console.error("Error polling notifications:", err)
+      );
+  };
+  fetchNotifs();                        // initial load
+  const intervalId = setInterval(fetchNotifs, 10000);  // every 10s
+  return () => clearInterval(intervalId);
+}, [user]);
 
   // 4. Poll global unread message count every 10 seconds
   useEffect(() => {
@@ -396,19 +401,13 @@ const HomePage = () => {
             <p>A scenic Himalayan valley in Nepal.</p>
           </div>
         </div>
-        <button className="view-all">View All</button>
+        <Link to="/discover">
+         <button className="view-all">View All</button>
+        </Link>
       </div>
 
       {/* Footer */}
-      <footer>
-        <img src={footerLogo} alt="Footer Logo" className="footer-logo" />
-        <p>© 2025 TravelTogether | All rights reserved</p>
-        <div className="footer-links">
-          <Link to="#">About</Link>
-          <Link to="#">Connect</Link>
-          <Link to="#">Help</Link>
-        </div>
-      </footer>
+      <Footer />
     </div>
   );
 };
